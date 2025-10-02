@@ -1,0 +1,235 @@
+// ================================
+// Layout Mixins
+// ================================
+
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+// Example:
+// .container {
+//   @include flex-center;
+// }
+
+@mixin center-absolute {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+// Example:
+// .modal {
+//   @include center-absolute;
+// }
+
+@mixin spacing($type, $size, $direction: null) {
+  @if $type == margin {
+    @if $direction == top {
+      margin-top: $size;
+    } @else if $direction == right {
+      margin-right: $size;
+    } @else if $direction == bottom {
+      margin-bottom: $size;
+    } @else if $direction == left {
+      margin-left: $size;
+    } @else if $direction == x {
+      margin-left: $size;
+      margin-right: $size;
+    } @else if $direction == y {
+      margin-top: $size;
+      margin-bottom: $size;
+    } @else {
+      margin: $size;
+    }
+  } @else if $type == padding {
+    @if $direction == top {
+      padding-top: $size;
+    } @else if $direction == right {
+      padding-right: $size;
+    } @else if $direction == bottom {
+      padding-bottom: $size;
+    } @else if $direction == left {
+      padding-left: $size;
+    } @else if $direction == x {
+      padding-left: $size;
+      padding-right: $size;
+    } @else if $direction == y {
+      padding-top: $size;
+      padding-bottom: $size;
+    } @else {
+      padding: $size;
+    }
+  }
+}
+// Example:
+// .section {
+//   @include spacing(margin, 16px, y);
+// }
+
+@mixin aspect-ratio($width, $height) {
+  aspect-ratio: $width / $height;
+}
+// Example:
+// .video {
+//   @include aspect-ratio(16, 9);
+// }
+
+// ================================
+// Effects Mixins
+// ================================
+
+@mixin box-shadow($color: rgba(0, 0, 0, 0.15), $blur: 4px, $spread: 1px) {
+  box-shadow: 0px 2px $blur $color, 0px 0px $spread $color;
+}
+// Example:
+// .card {
+//   @include box-shadow($color: rgba(0, 0, 0, 0.2), $blur: 6px);
+// }
+
+@mixin border-animation($color, $width: 2px) {
+  border: $width solid transparent;
+  transition: border-color 0.3s ease;
+
+  &:hover {
+    border-color: $color;
+  }
+}
+// Example:
+// .button {
+//   @include border-animation(#007bff);
+// }
+
+@mixin opacity-hover($duration: 0.3s) {
+  transition: opacity $duration ease-in-out;
+
+  &:hover {
+    opacity: 0.7;
+  }
+}
+// Example:
+// .image {
+//   @include opacity-hover;
+// }
+
+@mixin hover-scale($scale: 1.05, $duration: 0.3s) {
+  transition: transform $duration ease-in-out;
+
+  &:hover {
+    transform: scale($scale);
+  }
+}
+// Example:
+// .thumbnail {
+//   @include hover-scale(1.1);
+// }
+
+@mixin transition($property, $duration: 0.3s) {
+  transition: $property $duration ease-in-out;
+}
+// Example:
+// .button {
+//   @include transition(transform, 0.2s);
+// }
+
+@mixin gradient-bg($color1, $color2, $direction: to bottom) {
+  background: linear-gradient($direction, $color1, $color2);
+}
+// Example:
+// .header {
+//   @include gradient-bg(#007bff, #0056b3);
+// }
+
+// ================================
+// Responsive Mixins
+// ================================
+
+@mixin responsive($breakpoint) {
+  @if $breakpoint == sm {
+    @media (max-width: 576px) {
+      @content;
+    }
+  } @else if $breakpoint == md {
+    @media (max-width: 768px) {
+      @content;
+    }
+  } @else if $breakpoint == lg {
+    @media (max-width: 992px) {
+      @content;
+    }
+  } @else if $breakpoint == xl {
+    @media (max-width: 1200px) {
+      @content;
+    }
+  } @else {
+    @warn "Unknown breakpoint `#{$breakpoint}`.";
+  }
+}
+// Example:
+// .box {
+//   width: 100%;
+//   @include responsive(md) {
+//     width: 50%;
+//   }
+// }
+
+@mixin responsive-font($min-size, $max-size) {
+  font-size: $min-size;
+
+  @media (min-width: 768px) {
+    font-size: $max-size;
+  }
+}
+// Example:
+// h1 {
+//   @include responsive-font(20px, 32px);
+// }
+
+// ================================
+// Utility Mixins
+// ================================
+
+@mixin text-truncate {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+// Example:
+// .title {
+//   @include text-truncate;
+// }
+
+@mixin visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+// Example:
+// .sr-only {
+//   @include visually-hidden;
+// }
+
+@mixin custom-scrollbar($thumb-color: #888, $track-color: #f1f1f1) {
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $track-color;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $thumb-color;
+    border-radius: 10px;
+  }
+}
+// Example:
+// .scrollable {
+//   @include custom-scrollbar;
+// }
