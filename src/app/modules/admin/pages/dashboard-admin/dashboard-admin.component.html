@@ -1,1 +1,58 @@
-<p>dashboard-admin works!</p>
+<div class="dashboard flex">
+  <!-- Sidebar -->
+  <div
+    class="sidebar flex flex-column"
+    [ngClass]="{ collapsed: isCollapsed, expanded: isExpanded }"
+    (mouseenter)="expandSidebar()"
+    (mouseleave)="collapseSidebar()"
+  >
+    <div class="logo flex justify-content-center align-items-center w-full">
+      <img
+        src="../../../../../assets/images/logo2.png"
+        width="150px"
+        height="150px"
+        alt="logo"
+      />
+    </div>
+
+    <ul class="menu flex-grow-1">
+      <li *ngFor="let item of menuItems">
+        <a
+          [routerLink]="item.route"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          <i [class]="item.icon"></i>
+          <span class="label" *ngIf="!isCollapsed || isExpanded">{{
+            item.label
+          }}</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="signout flex align-items-center">
+      <i class="pi pi-sign-out"></i>
+      <span *ngIf="!isCollapsed || isExpanded">تسجيل الخروج</span>
+    </div>
+  </div>
+
+  <!-- Right side: Navbar + Content -->
+  <div class="main flex-1 flex-column flex flex-col">
+    <!-- Navbar -->
+    <div class="navbar flex justify-content-between align-items-center m-1">
+      <input type="text" pInputText placeholder="ابحث هنا ..." />
+      <div class="user-info flex align-items-center gap-3">
+        <i class="pi pi-user user-icon"></i>
+        <div class="flex flex-column line-height-1">
+          <span class="user-name font-bold"> مرحبًا، إسراء برهان </span>
+          <small class="user-role">الأدمن </small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content flex-1 p-4 overflow-auto">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>
