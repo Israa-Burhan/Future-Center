@@ -1,1 +1,9 @@
-<p>spinner works!</p>
+<div *ngIf="fullscreen" class="spinner-overlay">
+  <p-progressSpinner styleClass="w-6rem h-6rem"></p-progressSpinner>
+  <p class="spinner-text">{{ text }}</p>
+</div>
+
+<div *ngIf="!fullscreen" class="spinner-inline">
+  <p-progressSpinner styleClass="w-3rem h-3rem"></p-progressSpinner>
+  <span class="ml-2">{{ text }}</span>
+</div>
