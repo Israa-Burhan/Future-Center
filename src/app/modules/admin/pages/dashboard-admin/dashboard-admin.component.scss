@@ -1,0 +1,141 @@
+@import " ../../../../../../../assets/styles/scss/mixins";
+.dashboard {
+  direction: rtl;
+  .main {
+    background-color: var(--background);
+    margin-right: 250px;
+    height: 100vh;
+
+    @include responsive(lg) {
+      margin-right: 70px;
+    }
+
+    .navbar {
+      height: 60px;
+      flex-shrink: 0;
+
+      input {
+        width: 400px;
+        height: 40px;
+        border-radius: 10px;
+        border: 1px solid var(--primary-focus);
+        background: var(--white);
+        margin: 0 15px;
+        &::placeholder {
+          padding: 10px;
+          font-size: 18px;
+        }
+        @include responsive(md) {
+          width: 200px;
+        }
+        @include responsive(sm) {
+          width: 130px;
+        }
+      }
+      .user-info {
+        margin-left: 100px;
+        @include responsive(md) {
+          margin-left: 20px;
+        }
+        .user-icon {
+          font-size: 1.5rem;
+          color: var(--primary-focus);
+        }
+        .user-name {
+          font-size: 1rem;
+          margin-bottom: 6px;
+        }
+
+        .user-role {
+          font-size: 0.9rem;
+          color: var(--shirt-gray);
+        }
+      }
+    }
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 250px;
+    background: var(--primary-focus);
+    color: var(--white);
+    height: 100vh;
+    padding: 1rem 0;
+    transition: width 0.3s ease-in-out, transform 0.3s ease-in-out;
+    overflow: hidden;
+    z-index: 1000;
+
+    ul {
+      margin-top: 20px;
+
+      li {
+        margin: 6px 8px;
+        border-radius: 8px;
+
+        a {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          font-size: 18px;
+          padding: 10px 14px;
+          text-decoration: none;
+          color: var(--white);
+          border-radius: 8px;
+          transition: background 0.3s, transform 0.2s;
+          svg {
+            font-size: 1.2rem;
+          }
+          &:hover {
+            background: var(--gradient-primary);
+          }
+          &.active {
+            background: var(--gradient-primary);
+          }
+        }
+      }
+    }
+
+    &.collapsed {
+      width: 90px;
+      ul li {
+        justify-content: center;
+        padding: 8px;
+        margin: 6px auto;
+        border-radius: 999px;
+
+        &::before {
+          left: 6px;
+          right: 6px;
+          top: 6px;
+          bottom: 6px;
+          border-radius: 999px;
+        }
+
+        &.active::before {
+          opacity: 1;
+        }
+      }
+    }
+
+    .signout {
+      padding: 10px 25px;
+      cursor: pointer;
+      color: var(--brand-gold);
+
+      i {
+        margin-left: 10px;
+        transition: transform 0.3s ease-in-out;
+      }
+    }
+
+    &.collapsed {
+      width: 70px;
+    }
+
+    &.collapsed.expanded {
+      width: 220px;
+    }
+  }
+}

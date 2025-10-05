@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { NavbarComponent } from './modules/shared/components/navbar/navbar.component';
+import { FooterComponent } from './modules/shared/components/footer/footer.component';
 import { CommonModule } from '@angular/common';
 import { SpinnerComponent } from './modules/shared/components/spinner/spinner.component';
 import { supabase } from './core/services/supabase.client';
@@ -7,7 +9,7 @@ import { supabase } from './core/services/supabase.client';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, SpinnerComponent],
+  imports: [CommonModule,RouterOutlet, NavbarComponent, FooterComponent, SpinnerComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })

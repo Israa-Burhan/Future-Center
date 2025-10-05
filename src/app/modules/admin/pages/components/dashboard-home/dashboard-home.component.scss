@@ -1,0 +1,29 @@
+.stat-card {
+  border-radius: 1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  background-color: var(--white);
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .stat-icon {
+    background: rgba(26, 182, 157, 0.1);
+    color: #1ab69d;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.75rem;
+    font-size: 1.2rem;
+  }
+
+  .text-600 {
+    color: #6b7280;
+    font-size: 0.9rem;
+  }
+
+  .text-900 {
+    color: #1f2937;
+  }
+}

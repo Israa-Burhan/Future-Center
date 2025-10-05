@@ -1,6 +1,13 @@
+
+<app-navbar></app-navbar>
 <app-spinner
   *ngIf="loading"
   text="جاري تجهيز الجلسة..."
   [fullscreen]="true"
 ></app-spinner>
 <router-outlet *ngIf="!loading"></router-outlet>
+<app-footer></app-footer>
+
+
+
+
