@@ -1,1 +1,76 @@
-<p>footer works!</p>
+<footer class="flex flex-wrap justify-content-between gap-2 lg:gap-0">
+  <div class="flex flex-column align-items-center w-full lg:w-3 md:w-4">
+    <div class="flex gap-2 mb-3">
+      <div class="logo">
+        <img
+          src="../../../../../assets/images/logoHome.png"
+          alt="Future Center Logo"
+        />
+      </div>
+    </div>
+    <p class="text-center">
+      سنتر تعليمي تجمع بين الابتكار والجودة لتقديم محتوى متميز لجميع المراحل
+      الدراسية , بالإضافة الى وجود أخصائي تنمية مهارات وأطفال التوحد وحالات
+      الدمج وصعوبات التعلم.
+    </p>
+  </div>
+
+  <div class="w-full lg:w-2 md:w-6 pt-4">
+    <h4 class="mb-4"><i class="pi pi-warehouse"></i> الروابط الرئيسية</h4>
+    <ul class="links">
+      <li class="flex flex-column gap-1">
+        <a
+          *ngFor="let link of navLinks"
+          [routerLink]="link.route"
+          routerLinkActive="active"
+          class="px-2 py-2 border-round transition-colors duration-200"
+        >
+          <i class="pi pi-angle-double-left"></i>
+          {{ link.label }}
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="w-full lg:w-2 md:w-6 pt-4">
+    <h4 class="mb-4"><i class="pi pi-phone"></i> تواصل معنا</h4>
+    <ul class="contacts flex flex-column gap-1">
+      <li>
+        <a href="" target="_blank">
+          <i class="location pi pi-map-marker"></i> الأقالته بجوار صيدلية محمد
+          الطايع</a
+        >
+      </li>
+      <li>
+        <a href="mailto:centerfuture143&#64;gmail.com" target="_blank">
+          <i class="mail pi pi-envelope"></i>centerfuture143&#64;gmail.com
+        </a>
+      </li>
+      <li>
+        <a href="https://wa.me/+201155643236" target="_blank">
+          <i class="phone pi pi-whatsapp"></i>01155643236</a
+        >
+      </li>
+    </ul>
+  </div>
+
+  <div class="w-full lg:w-2 md:w-6 pt-4">
+    <h4 class="mb-4"><i class="pi pi-sitemap"></i> تابعنا على</h4>
+    <ul
+      class="socialMedia flex align-items-center justify-content-center text-center"
+    >
+      <li>
+        <a
+          class="facebook flex align-items-center justify-content-center"
+          href="https://www.facebook.com/sintarfiutshar/"
+          target="_blank"
+          ><i class="pi pi-facebook"></i
+        ></a>
+      </li>
+    </ul>
+  </div>
+</footer>
+
+<div class="copyRight">
+  <p class="text-center">© 2025 جميع الحقوق محفوظة لدى سنتر فيوتشر التعليمي</p>
+</div>
