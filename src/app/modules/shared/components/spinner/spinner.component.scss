@@ -1,0 +1,24 @@
+.spinner-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.8);
+  z-index: 9999;
+}
+
+.spinner-text {
+  margin-top: 1rem;
+  font-size: 1.2rem;
+  color: #3b82f6;
+}
+
+.spinner-inline {
+  display: flex;
+  align-items: center;
+}

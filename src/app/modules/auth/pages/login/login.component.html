@@ -1,1 +1,53 @@
-<p>login works!</p>
+<div class="h-screen login-container">
+  <div class="container h-full flex align-items-center justify-content-center">
+    <div
+      class="card-login flex align-items-center justify-content-center flex-wrap-reverse"
+    >
+      <div class="col-12 md:col-6 card-right p-0 md:p-5">
+        <h2 class="text-center mb-5">تسجيل الدخول</h2>
+        <form [formGroup]="form" (ngSubmit)="submit()" class="p-fluid">
+          <!-- Email -->
+          <div class="mb-3 flex flex-column gap-2">
+            <label for="email">البريد الإلكتروني</label>
+            <input id="email" type="email" pInputText formControlName="email" />
+            <app-validation-message
+              [control]="form.get('email')"
+            ></app-validation-message>
+          </div>
+
+          <!-- Password -->
+          <div class="mb-3 flex flex-column gap-2">
+            <label for="password">كلمة المرور</label>
+            <input
+              id="password"
+              type="password"
+              pInputText
+              formControlName="password"
+            />
+            <app-validation-message
+              [control]="form.get('password')"
+            ></app-validation-message>
+          </div>
+
+          <!-- Submit -->
+          <button
+            pButton
+            type="submit"
+            label="دخول"
+            class="w-full"
+            [disabled]="form.invalid || loading"
+            [loading]="loading"
+          ></button>
+        </form>
+
+        <!-- Toast -->
+        <p-toast></p-toast>
+      </div>
+      <div class="col-12 md:col-6 card-left p-0 md:p-5">
+        <img src="assets/images/logo.png" alt="Logo" />
+        <h1>سنتر فيوتشر</h1>
+        <p>مرحبا بك في سنتر فيوتشر التعليمي</p>
+      </div>
+    </div>
+  </div>
+</div>
