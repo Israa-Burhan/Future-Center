@@ -29,7 +29,7 @@ export class NavbarComponent {
 
   constructor() {}
   navLinks = [
-    { label: 'الرئيسية', route: '/home' },
+    { label: 'الرئيسية', route: '' },
     { label: 'المعلمين', route: '/teachers' },
     { label: 'تواصل معنا', route: '/contact' },
     { label: 'الاسئلة الشائعة', route: '/faq' },

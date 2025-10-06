@@ -12,7 +12,7 @@ import { CommonEngine } from '@angular/ssr';
 })
 export class FooterComponent {
   navLinks = [
-    { label: 'الصفحة الرئيسية', route: '/home' },
+    { label: 'الصفحة الرئيسية', route: '' },
     { label: 'المعلمين', route: '/teachers' },
     { label: 'تواصل معنا', route: '/contact' },
     { label: 'الاسئلة الشائعة', route: '/faq' },

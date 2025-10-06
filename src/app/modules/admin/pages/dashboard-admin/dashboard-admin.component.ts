@@ -33,21 +33,29 @@ export class DashboardAdminComponent {
   }
 
   menuItems = [
-    { label: 'الرئيسية', icon: 'pi pi-home', route: 'home' },
-    { label: 'الطلاب', icon: 'pi pi-users', route: 'students' },
-    { label: 'الصفوف', icon: 'pi pi-book', route: 'classes' },
-    { label: 'السجلات', icon: 'pi pi-file', route: 'records' },
-    {
-      label: 'الإحصائيات',
-      icon: 'pi pi-chart-line',
-      route: 'statistics',
-    },
-    { label: 'الإعدادات', icon: 'pi pi-cog', route: 'settings' },
+    { label: 'الرئيسية', icon: 'pi pi-home', route: 'dashboard' },
+    { label: 'إضافة طالب', icon: 'pi pi-user-plus', route: 'students' },
     {
       label: ' المعلمين',
-      icon: 'pi pi-comments',
+      icon: 'pi pi-users',
       route: 'teachers',
     },
+    { label: 'الصفوف', icon: 'pi pi-book', route: 'classes' },
+    { label: 'السجلات', icon: 'pi pi-file', route: 'enrollments' },
+    {
+      label: 'الحضور والغياب',
+      icon: 'pi pi-file-check',
+      route: 'attendance',
+    },
+    {
+      label: 'المدفوعات',
+      icon: 'pi pi-dollar',
+      route: 'payments',
+    },
+    { label: 'المصروفات', icon: 'pi pi-credit-card', route: 'expenses' },
+    { label: 'التقارير', icon: 'pi pi-chart-bar', route: 'reports' },
+    { label: 'الرسائل', icon: 'pi pi-envelope', route: 'messaging' },
+    { label: 'الإعدادات', icon: 'pi pi-cog', route: 'settings' },
   ];
 
   @HostListener('window:resize', ['$event'])
