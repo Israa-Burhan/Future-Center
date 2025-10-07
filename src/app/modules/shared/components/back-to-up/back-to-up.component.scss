@@ -1,0 +1,14 @@
+.back-to-top {
+  position: fixed;
+  bottom: 2rem;
+  right: auto;
+  left: 2rem;
+  z-index: 1000;
+  display: none;
+  background: var(--primary-600);
+  border: 1px solid var(--primary-700);
+}
+
+.show {
+  display: inline-flex;
+}

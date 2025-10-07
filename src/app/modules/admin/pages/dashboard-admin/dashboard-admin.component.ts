@@ -6,6 +6,7 @@ import { AvatarModule } from 'primeng/avatar';
 import { InputTextModule } from 'primeng/inputtext';
 import { RippleModule } from 'primeng/ripple';
 import { RouterModule } from '@angular/router';
+import { BackToUpComponent } from '../../../shared/components/back-to-up/back-to-up.component';
 
 @Component({
   selector: 'app-dashboard-admin',
