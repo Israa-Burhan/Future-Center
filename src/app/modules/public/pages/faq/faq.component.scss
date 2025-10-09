@@ -1,0 +1,72 @@
+.faq-wrap {
+  padding: 70px 0;
+  .head {
+    margin-bottom: 1.25rem;
+    h1 {
+      font-weight: var(--font-weight-bold);
+      color: var(--color-heading);
+      font-size: var(--h1);
+      margin-bottom: 8px;
+    }
+    .sub {
+      color: var(--shirt-gray);
+      font-size: var(--font-size-medium);
+      line-height: 1.8;
+      margin-bottom: 16px;
+    }
+
+    .search {
+      position: relative;
+      i {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+      }
+      input {
+        width: 100%;
+        padding: 16px;
+        border-radius: 12px;
+        box-shadow: none;
+      }
+    }
+  }
+  ::ng-deep {
+    p-accordion {
+      .p-accordion {
+        .p-accordion-header {
+          background: var(--color-light);
+          border: 1px solid var(--border-gray);
+          border-radius: 12px;
+          margin-bottom: 8px;
+          box-shadow: var(--shadow);
+          gap: 8px;
+          .p-accordion-header-link {
+            padding: 16px;
+            font-size: var(--font-size-medium);
+            font-weight: var(--font-weight-semi-bold);
+            color: var(--color-heading);
+            gap: 8px;
+            .p-accordion-header-icon {
+              color: var(--color-primary);
+              font-size: 1.25rem;
+            }
+          }
+        }
+        .p-accordion-content {
+          padding: 16px;
+          font-size: var(--font-size-medium);
+          color: var(--color-text-black);
+          border: none !important;
+        }
+      }
+    }
+  }
+}
+
+.no-results {
+  text-align: center;
+  color: #64748b;
+  padding: 1.25rem 0;
+}

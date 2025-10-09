@@ -1,1 +1,31 @@
-<p>faq works!</p>
+<section class="faq-wrap">
+  <div class="container">
+    <header class="head">
+      <h1>الأسئلة الشائعة</h1>
+      <p class="sub">
+        لو سؤالك مش موجود هنا، تقدر تراسلنا من صفحة تواصل معنا وسنرد عليك
+        سريعًا.
+      </p>
+
+      <div class="search col-12 md:col-6">
+        <i class="pi pi-search"></i>
+        <input
+          pInputText
+          type="text"
+          placeholder="ابحث في الأسئلة..."
+          [ngModel]="query()"
+          (ngModelChange)="query.set($event)"
+        />
+      </div>
+    </header>
+
+    <p-accordion [multiple]="true" styleClass="faq-acc">
+      <p-accordionTab *ngFor="let item of filtered()" [header]="item.q">
+        {{ item.a }}
+      </p-accordionTab>
+      <div *ngIf="filtered().length === 0" class="no-results">
+        لا توجد نتائج مطابقة لبحثك.
+      </div>
+    </p-accordion>
+  </div>
+</section>

@@ -11,24 +11,28 @@ import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
 })
 export class ValidationMessagePage {
   @Input() control?: AbstractControl | null;
+  @Input() messages?: Record<string, string>;
 
-  getErrorMessage(): string {
+  resolveMessage(): string {
     if (!this.control?.errors) return '';
+    const key = Object.keys(this.control.errors)[0];
+    const err = (this.control.errors as any)[key];
 
-    const errorKey = Object.keys(this.control.errors)[0];
-    const error = this.control.errors[errorKey];
-
-    switch (errorKey) {
+    if (err?.message) return err.message;
+    if (this.messages?.[key]) return this.messages[key];
+    switch (key) {
       case 'required':
         return 'هذا الحقل مطلوب';
       case 'email':
         return 'صيغة البريد غير صحيحة';
       case 'minlength':
-        return `يجب إدخال ${error.requiredLength} أحرف على الأقل`;
+        return `الحد الأدنى ${err?.requiredLength} أحرف`;
       case 'maxlength':
-        return `الحد الأقصى هو ${error.requiredLength} أحرف`;
+        return `الحد الأقصى ${err?.requiredLength} أحرف`;
+      case 'pattern':
+        return 'القيمة لا تطابق النمط المطلوب';
       default:
-        return error.message || 'خطأ في الإدخال';
+        return 'تحقق من الحقل';
     }
   }
 }

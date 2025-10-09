@@ -1,1 +1,194 @@
-<p>contact works!</p>
+<section class="container-contact">
+  <div class="container grid">
+    <div class="col-12 lg:col-6 hero-left">
+      <h1>تواصل معنا</h1>
+      <p class="lead">
+        أرسل رسالة، أو راسلنا عبر البريد أو الهاتف. فريقنا جاهز للرد على
+        استفسارك.
+      </p>
+
+      <div class="contact-list flex flex-column gap-3 mt-3 mb-3">
+        <a
+          href="mailto:centerfuture143@gmail.com"
+          class="contact-link"
+          target="_blank"
+        >
+          <i class="pi pi-envelope"></i>
+          <span>centerfuture143&#64;gmail.com</span>
+        </a>
+
+        <a
+          href="https://wa.me/+201155643236?text=استفسار"
+          class="contact-link"
+          target="_blank"
+        >
+          <i class="pi pi-whatsapp"></i>
+          <span>01155643236</span>
+        </a>
+
+        <p tabindex="-1">
+          <i class="pi pi-life-ring"></i>
+          <span>دعم العملاء — السبت إلى الخميس (4م - 10م)</span>
+        </p>
+      </div>
+
+      <div
+        class="features flex flex-row align-items-center flex-wrap p-0 gap-2"
+      >
+        <div class="col-12 md:col-4">
+          <h4>دعم العملاء</h4>
+          <p>نساعدك في أي استفسار يخص الحصص والمواعيد.</p>
+        </div>
+        <div class="col-12 md:col-4">
+          <h4>مقترحات</h4>
+          <p>اقتراحاتك تهمنا لنطوّر التجربة دومًا.</p>
+        </div>
+        <div class="col-12 md:col-4">
+          <h4>إعلام</h4>
+          <p>للاستفسارات الإعلامية، تواصل عبر البريد.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 lg:col-6">
+      <p-card class="form-card">
+        <ng-template pTemplate="title">
+          <div class="form-title">تواصل الآن</div>
+        </ng-template>
+
+        <form [formGroup]="form" (ngSubmit)="submit()" class="p-fluid">
+          <div class="grid">
+            <div class="col-12 md:col-6 flex flex-column gap-2">
+              <label for="firstName"
+                >الاسم الأول <span class="req">*</span></label
+              >
+              <input
+                pInputText
+                formControlName="firstName"
+                placeholder="مثال: أحمد"
+              />
+              <app-validation-message
+                [control]="form.get('firstName')"
+              ></app-validation-message>
+            </div>
+            <div class="col-12 md:col-6 flex flex-column gap-2">
+              <label for="lastName"
+                >اسم العائلة <span class="req">*</span></label
+              >
+              <input
+                pInputText
+                formControlName="lastName"
+                placeholder="مثال: علي"
+              />
+              <app-validation-message
+                [control]="form.get('lastName')"
+              ></app-validation-message>
+            </div>
+
+            <div class="col-12 flex flex-column gap-2">
+              <label for="email">البريد الإلكتروني</label>
+              <input
+                type="email"
+                pInputText
+                formControlName="email"
+                placeholder="example@email.com"
+              />
+              <app-validation-message
+                [control]="form.get('email')"
+              ></app-validation-message>
+            </div>
+
+            <div class="col-12 md:col-5 flex flex-column gap-2">
+              <label for="code">كود الدولة <span class="req">*</span></label>
+              <p-dropdown
+                [options]="codes"
+                formControlName="code"
+                optionLabel="label"
+                optionValue="value"
+                styleClass="ctrl ctrl-dd"
+              ></p-dropdown>
+              <app-validation-message
+                [control]="form.get('code')"
+              ></app-validation-message>
+            </div>
+            <div class="col-12 md:col-7 flex flex-column gap-2">
+              <label for="phoneNumber"
+                >رقم الهاتف <span class="req">*</span></label
+              >
+              <input
+                pInputText
+                formControlName="phone"
+                placeholder="رقم بدون كود"
+              />
+              <app-validation-message
+                [control]="form.get('phone')"
+              ></app-validation-message>
+            </div>
+
+            <div class="col-12 flex flex-column gap-2">
+              <label for="subject">الموضوع <span class="req">*</span></label>
+              <p-dropdown
+                [options]="subjects"
+                formControlName="subject"
+                optionLabel="label"
+                optionValue="value"
+                styleClass="ctrl ctrl-dd"
+              ></p-dropdown>
+              <app-validation-message
+                [control]="form.get('subject')"
+              ></app-validation-message>
+            </div>
+
+            <div class="col-12 flex flex-column gap-2">
+              <label for="message"
+                >كيف يمكننا مساعدتك؟ <span class="req">*</span></label
+              >
+              <textarea
+                pInputTextarea
+                rows="6"
+                formControlName="message"
+                maxlength="700"
+                placeholder="اكتب رسالتك هنا..."
+              ></textarea>
+              <div class="char">{{ form.value.message?.length || 0 }}/700</div>
+              <app-validation-message
+                [control]="form.get('message')"
+              ></app-validation-message>
+            </div>
+
+            <div class="col-12">
+              <button
+                pButton
+                type="submit"
+                label="إرسال"
+                class="btn-submit w-full"
+                [loading]="loading"
+                [disabled]="form.invalid || loading"
+              ></button>
+            </div>
+          </div>
+        </form>
+      </p-card>
+    </div>
+  </div>
+
+  <p-toast></p-toast>
+</section>
+<!-- 🗺️ Location Section -->
+<section class="location-section">
+  <div class="container grid">
+    <div class="col-12">
+      <div class="map-wrapper">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d266.56821073699143!2d32.6143727107363!3d25.684603103754974!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e1!3m2!1sar!2seg!4v1760003789220!5m2!1sar!2seg"
+          width="100%"
+          height="450"
+          style="border: 0"
+          allowfullscreen=""
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          title="موقع سنتر فيوتشر"
+        ></iframe>
+      </div>
+    </div>
+  </div>
+</section>
