@@ -1,35 +1,37 @@
-<header class="shadow-1 m-0">
-  <div class="flex align-items-center justify-content-between">
-    <div class="logo">
-      <img
-        src="../../../../../assets/images/logoHome.png "
-        alt="future center Logo"
-      />
-    </div>
-    <nav class="hidden lg:flex gap-2 xl:gap-4">
-      <a
-        *ngFor="let link of navLinks"
-        [routerLink]="link.route"
-        routerLinkActive="active"
-        class="px-2 py-2 border-round transition-colors duration-200"
+<header class="m-0">
+  <div class="container">
+    <div class="flex align-items-center justify-content-between">
+      <div class="logo">
+        <img
+          src="../../../../../assets/images/logoHome.png "
+          alt="future center Logo"
+        />
+      </div>
+      <nav class="hidden lg:flex gap-2 xl:gap-4">
+        <a
+          *ngFor="let link of navLinks"
+          [routerLink]="link.route"
+          routerLinkActive="active"
+          class="px-2 py-2 border-round transition-colors duration-200"
+        >
+          {{ link.label }}
+        </a>
+      </nav>
+      <div
+        class="login border-round px-5 py-3 hidden md:flex gap-4 align-items-center"
       >
-        {{ link.label }}
-      </a>
-    </nav>
-    <div
-      class="login border-round px-5 py-3 hidden md:flex gap-4 align-items-center"
-    >
-      <p>
-        <i class="pi pi-sign-in"></i>
-        <a routerLink="/login"> تسجيل</a>
-      </p>
-    </div>
-    <div class="flex md:hidden items-center gap-2">
-      <button
-        pButton
-        icon="pi pi-bars"
-        (click)="sidebarVisible = true"
-      ></button>
+        <p>
+          <i class="pi pi-sign-in"></i>
+          <a routerLink="/login"> تسجيل</a>
+        </p>
+      </div>
+      <div class="flex md:hidden items-center gap-2">
+        <button
+          pButton
+          icon="pi pi-bars"
+          (click)="sidebarVisible = true"
+        ></button>
+      </div>
     </div>
   </div>
 </header>

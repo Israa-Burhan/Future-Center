@@ -1,0 +1,84 @@
+.teachers-carousel {
+  text-align: center;
+  margin-bottom: 100px;
+  h2 {
+    font-size: var(--h1);
+    font-weight: 700;
+    color: var(--primary-focus);
+    margin-bottom: 0.5rem;
+  }
+  .section-divider {
+    height: 3px;
+    width: 100px;
+    margin: 2rem auto;
+    border-radius: 2px;
+    background: linear-gradient(to right, #1ab69d, #66d1c6, #1ab69d);
+  }
+
+  p {
+    max-width: 700px;
+    margin: 0 auto;
+    color: var(--color-text-black);
+    line-height: 1.8;
+    font-size: var(--font-size-large);
+    font-weight: 500;
+  }
+  .teacher-card {
+    border: 1px solid var(--primary-200);
+    background: #fff;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .image-wrapper {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto;
+
+      .teacher-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    .teacher-name {
+      font-weight: 600;
+      color: var(--primary-focus);
+    }
+
+    .teacher-subject {
+      font-size: var(--font-size-medium);
+      color: #777;
+    }
+  }
+}
+::ng-deep {
+  .p-carousel-content {
+    direction: ltr !important;
+  }
+  .p-carousel-item {
+    direction: rtl !important;
+  }
+
+  .p-carousel .p-carousel-prev,
+  .p-carousel .p-carousel-next {
+    color: var(--primary-focus);
+    background-color: var(--primary-200);
+    border: 1px solid var(--primary-focus);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+  }
+
+  .p-carousel .p-carousel-prev:hover,
+  .p-carousel .p-carousel-next:hover {
+    background-color: var(--primary-focus);
+    color: #fff;
+    transform: scale(1.1);
+  }
+}

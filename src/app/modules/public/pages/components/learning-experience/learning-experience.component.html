@@ -1,0 +1,29 @@
+<section class="learning-section">
+  <div class="container">
+    <h1>خدماتنا التعليمية للطلاب</h1>
+    <div class="overlay">
+      <p-carousel
+        [value]="slides"
+        [numVisible]="1"
+        [numScroll]="1"
+        orientation="vertical"
+        verticalViewPortHeight="360px"
+        [circular]="true"
+        [autoplayInterval]="6000"
+        [showIndicators]="true"
+        [showNavigators]="false"
+      >
+        <ng-template pTemplate="item" let-slide>
+          <div class="slide-card">
+            <h2>{{ slide.title }}</h2>
+            <ul>
+              <li *ngFor="let point of slide.desc" class="my-3">
+                <i class="pi pi-check-circle px-2"></i> {{ point }}
+              </li>
+            </ul>
+          </div>
+        </ng-template>
+      </p-carousel>
+    </div>
+  </div>
+</section>

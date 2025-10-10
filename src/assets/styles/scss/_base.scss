@@ -134,3 +134,19 @@ input {
   -moz-appearance: none;
   appearance: none;
 }
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 20px;
+}
+::-webkit-scrollbar-track {
+  background: #f0edff;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: #1d4ed8;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #1d4ed8;
+}

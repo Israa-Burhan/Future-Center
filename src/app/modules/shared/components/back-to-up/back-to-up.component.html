@@ -1,1 +1,8 @@
-<p>back-to-up works!</p>
+<button
+  pButton
+  icon="pi pi-arrow-up"
+  class="back-to-top p-button-rounded p-button-info p-shadow-6"
+  [class.show]="showButton"
+  (click)="scrollToTop()"
+  aria-label="Back to top"
+></button>

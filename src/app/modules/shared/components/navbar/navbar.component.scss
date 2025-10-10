@@ -1,6 +1,13 @@
+@import "../../../../../assets/styles/scss/mixins";
 header {
   background: var(--primary-focus);
-  padding: 1rem 2rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--primary-700);
+  box-shadow: 0 4px 6px #93c5fd;
+  @include responsive(sm) {
+    padding: 1rem 0;
+  }
+
   .logo {
     img {
       width: 230px;
