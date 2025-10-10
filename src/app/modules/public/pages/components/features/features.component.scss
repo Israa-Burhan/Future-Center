@@ -1,0 +1,60 @@
+.features {
+  text-align: center;
+  margin-bottom: 100px;
+  h2 {
+    font-size: var(--h1);
+    font-weight: 700;
+    color: var(--primary-focus);
+    margin-bottom: 0.5rem;
+  }
+  .section-divider {
+    height: 3px;
+    width: 100px;
+    margin: 2rem auto;
+    border-radius: 2px;
+    background: linear-gradient(to right, #1ab69d, #66d1c6, #1ab69d);
+  }
+
+  p {
+    max-width: 700px;
+    margin: 0 auto;
+    color: var(--color-text-black);
+    line-height: 1.8;
+    font-size: var(--font-size-large);
+    font-weight: 500;
+  }
+
+  .feature-card {
+    background: #fff;
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-6px);
+    }
+
+    .icon-wrapper {
+      font-size: 2rem;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem auto;
+      transition: all 0.3s ease;
+    }
+
+    .feature-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #222;
+      margin-bottom: 0.5rem;
+    }
+
+    .feature-desc {
+      color: #666;
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+  }
+}

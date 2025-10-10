@@ -1,0 +1,102 @@
+@import "../../../../../../assets/styles/scss/mixins";
+.learning-section {
+  position: relative;
+  width: 100%;
+  min-height: 520px;
+  background-image: url("../../../../../../assets/images/3d-render-graduation-cap-books-diploma.jpg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  display: flex;
+  align-items: center;
+  h1 {
+    color: var(--primary-focus);
+    font-size: var(--h1);
+    font-weight: 700;
+    margin-bottom: 1rem;
+    @include responsive(md) {
+      font-size: var(--h2);
+    }
+  }
+  .overlay {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: right;
+  }
+
+  .slide-card {
+    text-align: right;
+    padding: 2rem;
+    animation: fadeIn 1s ease;
+
+    @include responsive(sm) {
+      padding: 1rem;
+    }
+
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      color: var(--heading-color);
+      font-weight: 700;
+    }
+
+    li {
+      color: var(--dark-ink);
+      font-weight: 600;
+      font-size: var(--font-size-large);
+      @include responsive(sm) {
+        font-weight: 100;
+      }
+      i {
+        color: var(--color-success);
+        font-size: 1.2rem;
+      }
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(15px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+::ng-deep {
+  .p-carousel-container {
+    height: 250px;
+  }
+  .p-carousel .p-carousel-indicators {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+
+    .p-carousel-indicator {
+      margin: 0 4px; // المسافة بين النقاط
+
+      button {
+        width: 10px; // حجم الدائرة
+        height: 10px;
+        border-radius: 50%;
+        border: 2px solid var(--primary-focus);
+        background-color: transparent;
+        transition: all 0.3s ease;
+
+        &:hover {
+          background-color: var(--primary-focus);
+          opacity: 0.8;
+        }
+      }
+
+      &.p-highlight button {
+        background-color: var(--primary-focus);
+        border-color: var(--primary-focus);
+      }
+    }
+  }
+}

@@ -1,0 +1,40 @@
+<div class="teachers-carousel" id="team">
+  <div class="container">
+    <div class="mb-5">
+      <h2>فريقنا التعليمي المتميز</h2>
+      <div class="section-divider"></div>
+      <p>
+        نخبة من أفضل المعلمين والمعلمات المتخصصين في مختلف المواد الدراسية،
+        يعملون بروح الفريق لتقديم تجربة تعليمية تفاعلية وممتعة للطلاب، نسعى معًا
+        لبناء مستقبلٍ أكاديميٍ مشرق يحقق التميز لكل طالب وطالبة.
+      </p>
+    </div>
+
+    <p-carousel
+      [value]="teachers"
+      [numVisible]="4"
+      [numScroll]="1"
+      [circular]="true"
+      [autoplayInterval]="5000"
+      [responsiveOptions]="responsiveOptions"
+      [showIndicators]="false"
+      [showNavigators]="true"
+    >
+      <ng-template let-teacher pTemplate="item">
+        <div class="teacher-card border-round shadow-2 m-2 p-3 text-center">
+          <div class="image-wrapper mb-3">
+            <img
+              [src]="teacher.image"
+              [alt]="teacher.name"
+              class="teacher-img border-round mx-w-full"
+            />
+          </div>
+          <h4 class="teacher-name m-0">{{ teacher.name }}</h4>
+          <p class="teacher-subject m-0">
+            {{ teacher.subject }}
+          </p>
+        </div>
+      </ng-template>
+    </p-carousel>
+  </div>
+</div>

@@ -1,0 +1,37 @@
+<section class="features">
+  <div class="container">
+    <div class="mb-5">
+      <h2>مميزاتنا</h2>
+      <div class="section-divider"></div>
+      <p>
+        في سنتر فيوتشر التعليمية، نقدّم تجربة تعليمية حضورية متكاملة تهدف إلى
+        تنمية قدرات الطلبة في مختلف المراحل الدراسية ضمن بيئة تعليمية تفاعلية
+        ومريحة.
+      </p>
+    </div>
+
+    <div class="col-12 grid grid-nogutter">
+      <div
+        *ngFor="let feature of features"
+        class="col-12 sm:col-6 lg:col-3 p-2"
+      >
+        <div
+          class="feature-card p-4 border-round-xl cursor-pointer text-center shadow-3 h-full flex flex-column justify-content-center align-items-center"
+        >
+          <div
+            class="icon-wrapper"
+            [ngStyle]="{
+              backgroundColor: feature.bgColor,
+              color: feature.color
+            }"
+          >
+            <i [class]="feature.icon"></i>
+          </div>
+
+          <h4 class="feature-title">{{ feature.title }}</h4>
+          <p class="feature-desc">{{ feature.desc }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

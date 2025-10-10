@@ -1,0 +1,45 @@
+<section class="subjects-section text-center py-6">
+  <div class="container">
+    <div class="section-header mb-6">
+      <h3 class="section-title">المواد التعليمية</h3>
+      <div class="section-divider"></div>
+      <p>
+        تشمل مناهجنا جميع المراحل الدراسية:
+        <span>الابتدائية، الإعدادية، والثانوية</span>
+        – بنظامي <span>العام والأزهري</span> .
+      </p>
+    </div>
+
+    <div class="grid">
+      <ng-container *ngFor="let item of subjects">
+        <div
+          class="col-12 sm:col-6 lg:col-3 flex justify-content-center align-items-center"
+        >
+          <div
+            class="w-20rem flex flex-column justify-content-center align-items-center border-round shadow-3 text-center subject-card"
+          >
+            <img [src]="item.src" alt="subject image" />
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+    <div class="specialists-section p-mt-6">
+      <h2 class="special-title">بالإضافة إلى وجود أخصائي</h2>
+
+      <div class="grid justify-content-center">
+        <ng-container *ngFor="let sp of specialists">
+          <div
+            class="col-12 sm:col-6 lg:col-3 flex justify-content-center align-items-center"
+          >
+            <div
+              class="w-20rem flex flex-column justify-content-center align-items-center border-round shadow-3 text-center subject-card"
+            >
+              <img [src]="sp.src" [alt]="sp.alt" />
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</section>
