@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { AuthGuard } from './core/guards/auth.guard';
+import { adminCanMatch } from './core/guards/auth.guard';
 import { loginBlockGuard } from './core/guards/login-block.guard';
 import { publicRoutes } from './modules/public/public.routes';
 
@@ -22,7 +22,7 @@ export const routes: Routes = [
   // Admin
   {
     path: 'admin',
-    canActivate: [AuthGuard],
+    canMatch: [adminCanMatch],
     loadChildren: () =>
       import('./modules/admin/admin.routes').then((m) => m.adminRoutes),
   },
