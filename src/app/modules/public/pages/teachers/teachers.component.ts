@@ -1,3 +1,4 @@
+import { TeacherService } from './../../../../core/services/teacher.service';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -6,18 +7,8 @@ import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
 import { TagModule } from 'primeng/tag';
 import { RippleModule } from 'primeng/ripple';
+import { Teacher } from '../../../../core/models/teacher.model';
 
-interface Teacher {
-  id: number;
-  name: string;
-  title: string;
-  subject: string;
-  classes: string;
-  experience: number;
-  image: string;
-  university: string;
-  desc: string;
-}
 @Component({
   selector: 'app-teachers',
   standalone: true,
@@ -34,99 +25,54 @@ interface Teacher {
   styleUrl: './teachers.component.scss',
 })
 export class TeachersComponent {
-  teachers: Teacher[] = [
-    {
-      id: 1,
-      name: ' أ. محمد حسين محمدين',
-      title: ' مدرس العلوم الشرعية',
-      subject: 'العلوم الشرعية',
-      classes: 'الأعدادي والثانوي',
-      experience: 7,
-      university: 'جامعة الأقصر',
-      image: '/assets/images/teachers/omar.jpg',
-      desc: 'تركز على تنمية التفكير العلمي لدى الطلاب من خلال التجارب والأمثلة الواقعية، وتشغل حاليًا منصب منسقة العلوم في المنصة التعليمية.',
-    },
-    {
-      id: 2,
-      name: 'أ. سارة محمد',
-      title: 'مدرسة علوم',
-      subject: 'العلوم',
-      classes: 'الصف الثالث - الصف الرابع',
-      experience: 7,
-      university: 'جامعة البصرة',
-      image: '/assets/images/teachers/omar.jpg',
-      desc: 'تركز على تنمية التفكير العلمي لدى الطلاب من خلال التجارب والأمثلة الواقعية، وتشغل حاليًا منصب منسقة العلوم في المنصة التعليمية.',
-    },
-    {
-      id: 3,
-      name: 'أ. سارة محمد',
-      title: 'مدرسة علوم',
-      subject: 'العلوم',
-      classes: 'الصف الثالث - الصف الرابع',
-      experience: 7,
-      university: 'جامعة البصرة',
-      image: '/assets/images/teachers/omar.jpg',
-      desc: 'تركز على تنمية التفكير العلمي لدى الطلاب من خلال التجارب والأمثلة الواقعية، وتشغل حاليًا منصب منسقة العلوم في المنصة التعليمية.',
-    },
-    {
-      id: 4,
-      name: 'أ. سارة محمد',
-      title: 'مدرسة علوم',
-      subject: 'العلوم',
-      classes: 'الصف الثالث - الصف الرابع',
-      experience: 7,
-      university: 'جامعة البصرة',
-      image: '/assets/images/teachers/omar.jpg',
-      desc: 'تركز على تنمية التفكير العلمي لدى الطلاب من خلال التجارب والأمثلة الواقعية، وتشغل حاليًا منصب منسقة العلوم في المنصة التعليمية.',
-    },
-    {
-      id: 5,
-      name: 'أ. سارة محمد',
-      title: 'مدرسة علوم',
-      subject: 'العلوم',
-      classes: 'الصف الثالث - الصف الرابع',
-      experience: 7,
-      university: 'جامعة البصرة',
-      image: '/assets/images/teachers/omar.jpg',
-      desc: 'تركز على تنمية التفكير العلمي لدى الطلاب من خلال التجارب والأمثلة الواقعية، وتشغل حاليًا منصب منسقة العلوم في المنصة التعليمية.',
-    },
-    {
-      id: 6,
-      name: 'أ. سارة محمد',
-      title: 'مدرسة علوم',
-      subject: 'العلوم',
-      classes: 'الصف الثالث - الصف الرابع',
-      experience: 7,
-      university: 'جامعة البصرة',
-      image: '/assets/images/teachers/omar.jpg',
-      desc: 'تركز على تنمية التفكير العلمي لدى الطلاب من خلال التجارب والأمثلة الواقعية، وتشغل حاليًا منصب منسقة العلوم في المنصة التعليمية.',
-    },
-    {
-      id: 7,
-      name: 'أ. سارة محمد',
-      title: 'مدرسة علوم',
-      subject: 'العلوم',
-      classes: 'الصف الثالث - الصف الرابع',
-      experience: 7,
-      university: 'جامعة البصرة',
-      image: '/assets/images/teachers/omar.jpg',
-      desc: 'تركز على تنمية التفكير العلمي لدى الطلاب من خلال التجارب والأمثلة الواقعية، وتشغل حاليًا منصب منسقة العلوم في المنصة التعليمية.',
-    },
-  ];
-
   selectedTeacher: Teacher | undefined;
-  constructor(private route: ActivatedRoute, private router: Router) {}
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private teacherService: TeacherService
+  ) {}
 
   ngOnInit() {
-    // نقرأ المعرف (id) من الرابط
     this.route.queryParams.subscribe((params) => {
       const id = params['id'];
       if (id) {
-        this.selectedTeacher = this.teachers.find((t) => t.id === +id);
+        const teacherId = +id;
+
+        this.teacherService.getTeacherById(teacherId).subscribe((teacher) => {
+          this.selectedTeacher = teacher;
+        });
       }
     });
   }
+  get generalSubjects(): string {
+    if (!this.selectedTeacher || !this.selectedTeacher.subjects) {
+      return 'غير محدد';
+    }
 
+    return this.selectedTeacher.subjects.map((s) => s.name).join(' | ');
+  }
+
+  get detailedSubjectScopes(): string {
+    if (
+      !this.selectedTeacher ||
+      !this.selectedTeacher.subjects ||
+      this.selectedTeacher.subjects.length === 0
+    ) {
+      return 'غير محدد';
+    }
+
+    const subjects = this.selectedTeacher.subjects;
+
+    if (subjects.length === 1) {
+      return subjects[0].teaching_scope;
+    }
+
+    const detailedScopes = subjects.map(
+      (s) => `${s.name} (${s.teaching_scope})`
+    );
+
+    return detailedScopes.join(' , ');
+  }
   goBack() {
     this.router.navigate(['/'], { fragment: 'teachers' });
   }
