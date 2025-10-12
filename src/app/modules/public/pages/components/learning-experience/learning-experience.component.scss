@@ -68,19 +68,16 @@
 }
 
 ::ng-deep {
-  .p-carousel-container {
-    height: 250px;
-  }
   .p-carousel .p-carousel-indicators {
     display: flex;
     justify-content: center;
     margin-top: 1rem;
 
     .p-carousel-indicator {
-      margin: 0 4px; // المسافة بين النقاط
+      margin: 0 4px;
 
       button {
-        width: 10px; // حجم الدائرة
+        width: 10px;
         height: 10px;
         border-radius: 50%;
         border: 2px solid var(--primary-focus);

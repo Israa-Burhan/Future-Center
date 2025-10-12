@@ -1,1 +1,84 @@
-<p>teachers works!</p>
+<div class="teacher-profile-container mb-5 p-5">
+  <div class="teacher-header text-center mb-5">
+    <h2 class="text-4xl font-bold text-900">الملف الشخصي للمعلم</h2>
+  </div>
+
+  <div class="p-card shadow-4 border-round-2xl">
+    <div class="grid p-4">
+      <div
+        class="col-12 md:col-4 lg:col-5 flex justify-content-center align-items-start order-1 md:order-2"
+      >
+        <div class="image-card max-w-full">
+          <img
+            [src]="selectedTeacher?.image"
+            [alt]="selectedTeacher?.name"
+            class="w-full border-round-3xl shadow-5"
+            style="max-height: 450px; object-fit: cover"
+          />
+        </div>
+      </div>
+
+      <div class="col-12 md:col-8 lg:col-7 p-4 order-2 md:order-1">
+        <div class="mb-4">
+          <h1 class="text-5xl font-bold text-primary">
+            {{ selectedTeacher?.name }}
+          </h1>
+          <h3 class="text-xl text-700 mt-2">
+            {{ selectedTeacher?.title }}
+          </h3>
+        </div>
+
+        <hr class="mb-4" />
+
+        <ul class="list-none p-0 m-0 line-height-4 text-lg">
+          <li class="mb-3 flex align-items-center">
+            <i class="pi pi-briefcase mr-3 text-2xl text-orange-500"></i>
+            <span class="font-semibold mx-2 text-800">الخبرة :</span>
+            <span class="ml-2 font-medium"
+              >{{ selectedTeacher?.experience }} سنوات</span
+            >
+          </li>
+          <li class="mb-3 flex align-items-center">
+            <i class="pi pi-graduation-cap mr-3 text-2xl text-blue-500"></i>
+            <span class="font-semibold mx-2 text-800">الجامعة :</span>
+            <span class="ml-2 font-medium">{{
+              selectedTeacher?.university
+            }}</span>
+          </li>
+          <li class="mb-3 flex align-items-center">
+            <i class="pi pi-book mr-3 text-2xl text-green-500"></i>
+            <span class="font-semibold mx-2 text-800">التخصص :</span>
+            <span class="ml-2 font-medium">{{ selectedTeacher?.subject }}</span>
+          </li>
+          <li class="mb-3 flex align-items-center">
+            <i class="pi pi-users mr-3 text-2xl text-teal-500"></i>
+            <span class="font-semibold mx-2 text-800">الصفوف :</span>
+            <span class="ml-2 font-medium">{{ selectedTeacher?.classes }}</span>
+          </li>
+        </ul>
+
+        <hr class="mt-5 mb-4" />
+
+        <div class="mt-4">
+          <h4 class="text-2xl font-semibold mb-3 text-900">نبذة عن المعلم</h4>
+          <p
+            class="teacher-desc text-lg text-700 line-height-3 p-3 bg-gray-100 border-round-lg"
+          >
+            {{ selectedTeacher?.desc }}
+          </p>
+        </div>
+
+        <div class="mt-5">
+          <button
+            pButton
+            label="الرجوع لقائمة المعلمين"
+            icon="pi pi-arrow-left ml-2"
+            class="p-button-primary p-button-lg text-xl"
+            routerLink="/"
+            fragment="teachers"
+          ></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

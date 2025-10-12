@@ -1,4 +1,4 @@
-<div class="teachers-carousel" id="team">
+<div class="teachers-carousel" id="teachers">
   <div class="container">
     <div class="mb-5">
       <h2>فريقنا التعليمي المتميز</h2>
@@ -33,6 +33,13 @@
           <p class="teacher-subject m-0">
             {{ teacher.subject }}
           </p>
+
+          <button
+            [routerLink]="['/teachers']"
+            [queryParams]="{ id: teacher.id }"
+          >
+            تفاصيل أكثر
+          </button>
         </div>
       </ng-template>
     </p-carousel>
