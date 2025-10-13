@@ -91,6 +91,7 @@ export class DashboardAdminComponent implements OnInit {
     void this.initUserInfo();
   }
 
+
   private async buildMenuFromRoutes() {
     const role = await this.auth.getRole().catch(() => null);
     const roles = role ? [role as Role] : ([] as Role[]);
