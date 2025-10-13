@@ -1,0 +1,51 @@
+@import "../../../../../../assets/styles/scss/mixins";
+.schedule-classes {
+  h2 {
+    font-size: var(--h2);
+    @include responsive(sm) {
+      font-size: var(--h4);
+    }
+  }
+  input {
+    height: 40px;
+  }
+}
+::ng-deep {
+  .p-card-body {
+    padding: 10px !important;
+  }
+  .p-dropdown {
+    height: 40px;
+    align-items: center;
+    span {
+      padding-right: 10px;
+    }
+    .p-dropdown-clear-icon {
+      left: 3rem;
+      right: unset;
+    }
+    .p-dropdown-panel .p-dropdown-items .p-dropdown-item {
+      padding: 10px 5px;
+    }
+  }
+  .p-calendar {
+    height: 40px;
+  }
+
+  .p-datatable-thead {
+    height: 40px;
+  }
+  .p-datatable-gridlines .p-datatable-tbody > tr > td,
+  .p-datatable-gridlines .p-datatable-thead > tr > th {
+    padding: 1rem;
+  }
+  .p-datatable .p-datatable-thead > tr > th {
+    border-bottom: 3px solid var(--primary-200);
+  }
+  .p-datatable-wrapper::-webkit-scrollbar {
+    height: 8px;
+  }
+  .p-button .p-button-icon.pi {
+    margin-left: 5px;
+  }
+}

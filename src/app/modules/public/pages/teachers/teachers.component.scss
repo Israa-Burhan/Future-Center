@@ -1,0 +1,16 @@
+::ng-deep {
+  .p-datatable-thead {
+    height: 40px;
+  }
+  .p-datatable-gridlines .p-datatable-tbody > tr > td,
+  .p-datatable-gridlines .p-datatable-thead > tr > th {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+  .p-datatable .p-datatable-thead > tr > th {
+    border-bottom: 3px solid var(--primary-200);
+  }
+  .p-datatable-wrapper::-webkit-scrollbar {
+    height: 8px;
+  }
+}

@@ -1,13 +1,19 @@
 @import " ../../../../../../../assets/styles/scss/mixins";
 .dashboard {
   direction: rtl;
+  height: 100vh;
+  display: flex;
   .main {
     background-color: var(--background);
     margin-right: 250px;
     height: 100vh;
+    width: calc(100% - 250px);
+    display: flex;
+    flex-direction: column;
 
     @include responsive(lg) {
       margin-right: 70px;
+      width: calc(100% - 70px);
     }
 
     .navbar {
@@ -51,6 +57,12 @@
           color: var(--shirt-gray);
         }
       }
+    }
+
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
     }
   }
 

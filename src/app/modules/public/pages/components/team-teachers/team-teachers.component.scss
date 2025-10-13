@@ -54,6 +54,19 @@
       font-size: var(--font-size-medium);
       color: #777;
     }
+    button,
+    .details-btn {
+      background: var(--primary-focus);
+      color: #fff;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      cursor: pointer;
+
+      &:hover {
+        background: var(--primary-600);
+      }
+    }
   }
 }
 ::ng-deep {

@@ -36,7 +36,7 @@ export class NavbarComponent implements OnInit {
   ) {}
   navLinks = [
     { label: 'الرئيسية', route: '' },
-    { label: 'المعلمين', route: '/teachers' },
+    { label: 'المعلمين', route: '/', fragment: 'teachers' },
     { label: 'تواصل معنا', route: '/contact' },
     { label: 'الاسئلة الشائعة', route: '/faq' },
   ];

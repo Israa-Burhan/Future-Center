@@ -1,1 +1,222 @@
-<p>classes works!</p>
+<p-toast position="top-right"></p-toast>
+<p-confirmDialog
+  [style]="{ width: '50vw' }"
+  [baseZIndex]="1000"
+></p-confirmDialog>
+<div class="schedule-classes">
+  <div class="text-center mb-5">
+    <h2 class="font-bold text-900">لوحة تحكم جدولة الحصص</h2>
+  </div>
+
+  <p-card
+    [header]="isEditing ? 'تعديل الموعد الحالي' : 'إضافة موعد جديد'"
+    class="shadow-4 border-round-2xl surface-card mb-6 p-0"
+  >
+    <div class="p-fluid grid formgrid">
+      <div class="field col-12 md:col-6">
+        <label for="teacher" class="font-semibold text-lg mb-2 block"
+          >اختيار المعلم: <span class="text-red-500">*</span></label
+        >
+        <p-dropdown
+          id="teacher"
+          [options]="teachersList"
+          optionLabel="name"
+          optionValue="id"
+          placeholder="اختر المعلم المراد جدولة حصصه"
+          [(ngModel)]="newSchedule.teacherId"
+          (onChange)="onTeacherChange($event)"
+          [showClear]="true"
+          class="w-full"
+        >
+        </p-dropdown>
+      </div>
+
+      <div class="field col-12 md:col-6">
+        <label for="subject" class="font-semibold text-lg mb-2 block"
+          >اختيار المادة: <span class="text-red-500">*</span></label
+        >
+        <p-dropdown
+          id="subject"
+          [options]="availableSubjectsNames"
+          placeholder="اختر المادة المراد جدولة حصصه"
+          [(ngModel)]="newSchedule.subjectName"
+          (onChange)="onSubjectChange($event)"
+          [disabled]="!newSchedule.teacherId"
+          [showClear]="true"
+          class="w-full"
+        >
+        </p-dropdown>
+      </div>
+
+      <div class="field col-12 md:col-4">
+        <label for="level" class="font-semibold text-lg mb-2 block"
+          >المرحلة التعليمية: <span class="text-red-500">*</span></label
+        >
+        <p-dropdown
+          id="level"
+          [options]="educationalLevels"
+          [(ngModel)]="selectedEducationalLevel"
+          (onChange)="onLevelChange($event)"
+          placeholder="اختر المرحلة"
+          optionLabel="label"
+          optionValue="value"
+          [disabled]="!newSchedule.subjectName"
+          [showClear]="true"
+          class="w-full"
+        ></p-dropdown>
+      </div>
+
+      <div class="field col-12 md:col-4">
+        <label for="scope" class="font-semibold text-lg mb-2 block"
+          >الصف المطلوب للحصة: <span class="text-red-500">*</span></label
+        >
+        <p-dropdown
+          id="scope"
+          [options]="availableClassScopes"
+          [(ngModel)]="selectedSubjectScope"
+          (onChange)="onScopeChange($event)"
+          placeholder="اختر الصف"
+          [disabled]="!availableClassScopes.length"
+          [showClear]="true"
+          class="w-full"
+        ></p-dropdown>
+      </div>
+
+      <div class="field col-12 md:col-4">
+        <label for="className" class="font-semibold text-lg mb-2 block"
+          >عنوان الحصة (اختياري):</label
+        >
+        <input
+          id="className"
+          type="text"
+          pInputText
+          placeholder="مثال: مراجعة الوحدة الأولى"
+          class="w-full"
+          [(ngModel)]="newSchedule.className"
+        />
+      </div>
+
+      <div class="field col-12 md:col-6">
+        <label for="day" class="font-semibold text-lg mb-2 block"
+          >اليوم: <span class="text-red-500">*</span></label
+        >
+        <p-dropdown
+          id="day"
+          [options]="daysOfWeek"
+          placeholder="اختر يوم الحصة"
+          [(ngModel)]="newSchedule.day"
+          [showClear]="true"
+          class="w-full"
+        >
+        </p-dropdown>
+      </div>
+
+      <div class="field col-12 md:col-6">
+        <label for="startTime" class="font-semibold text-lg mb-2 block"
+          >وقت البدء: <span class="text-red-500">*</span></label
+        >
+        <p-calendar
+          id="startTime"
+          [timeOnly]="true"
+          hourFormat="24"
+          placeholder="وقت بدء الحصة"
+          [(ngModel)]="newSchedule.startTime"
+          class="w-full"
+        >
+        </p-calendar>
+      </div>
+
+      <div class="col-12 mt-4 text-center flex justify-content-center gap-3">
+        <p-button
+          [label]="isEditing ? 'حفظ التعديلات' : 'إضافة الموعد الجديد وجدولته'"
+          icon="pi pi-check"
+          [styleClass]="
+            isEditing
+              ? 'p-button-lg p-button-warning'
+              : 'p-button-lg p-button-success'
+          "
+          [disabled]="
+            !newSchedule.teacherId ||
+            !newSchedule.subjectName ||
+            !selectedSubjectScope ||
+            !newSchedule.day ||
+            !newSchedule.startTime
+          "
+          (onClick)="saveSchedule()"
+        >
+        </p-button>
+
+        <p-button
+          *ngIf="isEditing"
+          label="إلغاء التعديل"
+          icon="pi pi-times"
+          styleClass="p-button-lg p-button-secondary p-button-outlined"
+          (onClick)="cancelEdit()"
+        >
+        </p-button>
+      </div>
+    </div>
+  </p-card>
+
+  <p-card class="shadow-4 border-round-2xl surface-card">
+    <p-table
+      [value]="currentSchedules"
+      [paginator]="true"
+      [rows]="10"
+      [tableStyle]="{ 'min-width': '60rem' }"
+      styleClass="p-datatable-gridlines p-datatable-striped"
+    >
+      <ng-template pTemplate="caption">
+        <h3 class="font-bold text-center text-xl">جميع الحصص المجدولة</h3>
+        <p-divider></p-divider>
+      </ng-template>
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th [style]="{ width: '200px' }" class="text-center">المعلم</th>
+          <th class="text-center">المادة</th>
+          <th [style]="{ width: '200px' }" class="text-center">الصف</th>
+          <th class="text-center">اليوم</th>
+          <th class="text-center">الوقت</th>
+          <th class="text-center">عنوان الحصة</th>
+          <th class="text-center">إجراءات</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-schedule>
+        <tr>
+          <td class="text-center">{{ schedule.teacher_name }}</td>
+          <td class="text-center">{{ schedule.subject }}</td>
+          <td class="text-center font-medium">
+            {{ schedule.class_level_scope }}
+          </td>
+          <td class="text-center">{{ schedule.day }}</td>
+          <td class="text-center">{{ schedule.start_time }}</td>
+          <td class="text-center">{{ schedule.class_name || "-" }}</td>
+          <td class="text-center">
+            <div class="flex justify-content-center gap-2">
+              <p-button
+                icon="pi pi-pencil "
+                styleClass="p-button-sm p-button-info p-button-text"
+                label="تعديل"
+                (onClick)="setScheduleForEdit(schedule)"
+              ></p-button>
+              <p-button
+                icon="pi pi-trash"
+                styleClass="p-button-sm p-button-danger p-button-text"
+                label="حذف"
+                (click)="deleteSchedule(schedule.id)"
+              ></p-button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="7" class="text-center p-4">
+            لا توجد حصص مجدولة حاليًا.
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+</div>

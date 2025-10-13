@@ -29,3 +29,10 @@
     max-width: 1320px;
   }
 }
+body {
+  overflow: auto;
+}
+
+body.dashboard-active {
+  overflow: hidden !important;
+}

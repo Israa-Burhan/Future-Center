@@ -11,12 +11,20 @@
         <a
           *ngFor="let link of navLinks"
           [routerLink]="link.route"
+          [fragment]="link.fragment"
           routerLinkActive="active"
           class="px-2 py-2 border-round transition-colors duration-200"
         >
           {{ link.label }}
         </a>
       </nav>
+      <div
+        class="login border-round px-5 py-3 hidden lg:flex gap-4 align-items-center"
+      >
+        <p>
+          <i class="pi pi-sign-in"></i>
+          <a routerLink="/login"> تسجيل</a>
+        </p>
       <div class="login hidden lg:flex gap-4 align-items-center">
         <ng-container *ngIf="isAuthenticated; else loginBlock">
           <button
