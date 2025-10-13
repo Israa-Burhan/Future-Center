@@ -12,3 +12,12 @@ export interface Teacher {
   university: string;
   desc: string;
 }
+export interface ClassSchedule {
+  id: number;
+  teacher_id: number;
+  day: string;
+  start_time: string;
+  class_name?: string;
+  subject: string;
+  class_level_scope: string;
+}

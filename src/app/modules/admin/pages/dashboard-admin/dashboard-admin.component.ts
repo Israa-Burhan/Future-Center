@@ -41,7 +41,7 @@ export class DashboardAdminComponent {
       icon: 'pi pi-users',
       route: 'teachers',
     },
-    { label: 'الصفوف', icon: 'pi pi-book', route: 'classes' },
+    { label: 'جدولة الحصص', icon: 'pi pi-book', route: 'classes' },
     { label: 'السجلات', icon: 'pi pi-file', route: 'enrollments' },
     {
       label: 'الحضور والغياب',
@@ -72,5 +72,13 @@ export class DashboardAdminComponent {
 
   collapseSidebar() {
     if (this.isCollapsed) this.isExpanded = false;
+  }
+
+  ngOnInit() {
+    document.body.classList.add('dashboard-active');
+  }
+
+  ngOnDestroy() {
+    document.body.classList.remove('dashboard-active');
   }
 }
