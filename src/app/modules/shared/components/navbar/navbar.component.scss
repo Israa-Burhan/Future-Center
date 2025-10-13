@@ -24,15 +24,22 @@ header {
     }
   }
   .login {
-    background: var(--primary-600);
-    cursor: pointer;
+    .p-button {
+      background: var(--primary-600);
+      border: none;
+      box-shadow: none;
+      font-size: 18px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      &:hover {
+        background: var(--primary-600);
+      }
+    }
     i {
       color: var(--white);
-    }
-    a {
-      color: var(--white);
-      font-size: 22px;
-      padding: 0 0.2rem;
     }
   }
 }
@@ -57,15 +64,25 @@ header {
     }
   }
   .login {
-    background: var(--primary-600);
-    cursor: pointer;
+    .p-button {
+      background: var(--primary-600);
+      border: none;
+      box-shadow: none;
+      font-size: 18px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      &:hover {
+        background: var(--primary-600);
+      }
+    }
     i {
       color: var(--white);
-    }
-    a {
-      color: var(--white);
-      font-size: 22px;
-      padding: 0 0.2rem;
     }
   }
 }

@@ -30,10 +30,10 @@
       </li>
     </ul>
 
-    <div class="signout flex align-items-center">
+    <button pButton class="signout flex align-items-center" (click)="signOut()">
       <i class="pi pi-sign-out"></i>
       <span *ngIf="!isCollapsed || isExpanded">تسجيل الخروج</span>
-    </div>
+    </button>
   </div>
 
   <!-- Right side: Navbar + Content -->
@@ -44,8 +44,8 @@
       <div class="user-info flex align-items-center gap-3">
         <i class="pi pi-user user-icon"></i>
         <div class="flex flex-column line-height-1">
-          <span class="user-name font-bold"> مرحبًا، إسراء برهان </span>
-          <small class="user-role">الأدمن </small>
+          <span class="user-name font-bold">مرحبًا، {{ userName }}</span>
+          <small class="user-role">{{ userRoleLabel }}</small>
         </div>
       </div>
     </div>

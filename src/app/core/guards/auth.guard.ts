@@ -1,5 +1,9 @@
 import { inject } from '@angular/core';
 import {
+  CanMatchFn,
+  CanActivateChildFn,
+  Route,
+  UrlSegment,
   ActivatedRouteSnapshot,
   RouterStateSnapshot,
   Router,
@@ -7,26 +11,43 @@ import {
 } from '@angular/router';
 import { AuthService } from '../../modules/auth/services/auth.service';
 
-export const AuthGuard = async (
-  route: ActivatedRouteSnapshot,
-  state: RouterStateSnapshot
-): Promise<boolean | UrlTree> => {
+async function requireSessionOrRedirect(
+  attemptedUrl: string
+): Promise<true | UrlTree> {
   const auth = inject(AuthService);
   const router = inject(Router);
-  try {
-    const session = await auth.getSession();
-    if (!session)
-      return router.parseUrl(
-        '/login?returnUrl=' + encodeURIComponent(state.url)
-      );
-
-    const allowed = route.data?.['roles'] as string[] | undefined;
-    if (!allowed) return true;
-
-    const role = await auth.getRole();
-    return allowed.includes(role) ? true : router.parseUrl('/admin/dashboard');
-  } catch (e) {
-    console.error('AuthGuard error:', e);
-    return router.parseUrl('/login');
+  const session = await auth.getSession();
+  if (!session) {
+    return router.createUrlTree(['/login'], {
+      queryParams: { returnUrl: attemptedUrl },
+    });
   }
+  return true;
+}
+
+export const adminCanMatch: CanMatchFn = async (
+  route: Route,
+  segments: UrlSegment[]
+) => {
+  const attemptedUrl = '/' + segments.map((s) => s.path).join('/') || '/admin';
+  return requireSessionOrRedirect(attemptedUrl);
+};
+export const adminCanActivateChild: CanActivateChildFn = async (
+  childRoute: ActivatedRouteSnapshot,
+  state: RouterStateSnapshot
+) => {
+  const auth = inject(AuthService);
+  const router = inject(Router);
+  const ok = await requireSessionOrRedirect(state.url);
+  if (ok !== true) return ok;
+  const required =
+    (childRoute.data?.['roles'] as ('admin' | 'staff')[] | undefined) ?? [];
+  if (!required.length) return true;
+
+  const roleOrRoles = await auth.getRole();
+  const userRoles = Array.isArray(roleOrRoles) ? roleOrRoles : [roleOrRoles];
+
+  return required.some((r) => userRoles.includes(r))
+    ? true
+    : router.parseUrl('/admin/dashboard');
 };

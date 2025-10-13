@@ -7,7 +7,7 @@
           alt="future center Logo"
         />
       </div>
-      <nav class="hidden lg:flex gap-2 xl:gap-4">
+      <nav class="hidden lg:flex gap-2 xl:gap-4" aria-label="Main">
         <a
           *ngFor="let link of navLinks"
           [routerLink]="link.route"
@@ -25,6 +25,37 @@
           <i class="pi pi-sign-in"></i>
           <a routerLink="/login"> تسجيل</a>
         </p>
+      <div class="login hidden lg:flex gap-4 align-items-center">
+        <ng-container *ngIf="isAuthenticated; else loginBlock">
+          <button
+            pButton
+            routerLink="/admin"
+            class="flex align-items-center gap-2"
+          >
+            <i class="pi pi-gauge"></i>
+            <span>لوحة التحكم</span>
+          </button>
+          <button
+            pButton
+            (click)="logout()"
+            class="flex align-items-center gap-2"
+            [disabled]="loggingOut"
+          >
+            <i class="pi pi-sign-out"></i>
+            <span *ngIf="!loggingOut">تسجيل خروج</span>
+            <span *ngIf="loggingOut">جاري تسجيل الخروج...</span>
+          </button>
+        </ng-container>
+        <ng-template #loginBlock>
+          <button
+            pButton
+            routerLink="/login"
+            class="flex align-items-center gap-2"
+          >
+            <i class="pi pi-sign-in"></i>
+            <span>تسجيل</span>
+          </button>
+        </ng-template>
       </div>
       <div class="flex lg:hidden items-center gap-2">
         <button
@@ -42,31 +73,63 @@
   [showCloseIcon]="false"
   class="sidebar"
 >
-  <div class="flex align-items-center justify-content-between py-3">
-    <button type="button" class="p-button" (click)="sidebarVisible = false">
-      <i class="pi pi-times text-xl"></i>
-    </button>
-    <div class="logo">
-      <img
-        src="../../../../../assets/images/logoar.png "
-        alt="future center Logo"
-      />
+  <div class="flex flex-column justify-content-between h-full">
+    <div>
+      <div class="flex align-items-center justify-content-between py-3">
+        <button type="button" class="p-button" (click)="sidebarVisible = false">
+          <i class="pi pi-times text-xl"></i>
+        </button>
+        <div class="logo">
+          <img
+            src="../../../../../assets/images/logoar.png "
+            alt="future center Logo"
+          />
+        </div>
+      </div>
+
+      <nav class="flex flex-column gap-4 my-5 px-3" aria-label="Main">
+        <a
+          *ngFor="let link of navLinks"
+          [routerLink]="link.route"
+          routerLinkActive="active"
+          class="px-2 py-2 border-round transition-colors duration-200"
+        >
+          {{ link.label }}
+        </a>
+      </nav>
+    </div>
+    <div class="login">
+      <ng-container *ngIf="isAuthenticated; else mobileLogin">
+        <button
+          pButton
+          class="flex align-items-center gap-2 justify-content-center"
+          routerLink="/admin"
+          (click)="sidebarVisible = false"
+        >
+          <i class="pi pi-gauge"></i>
+          <span>لوحة التحكم</span>
+        </button>
+        <button
+          pButton
+          class="flex align-items-center gap-2 justify-content-center"
+          routerLink="/login"
+          (click)="logout()"
+        >
+          <i class="pi pi-sign-out"></i>
+          <span>تسجيل خروج</span>
+        </button>
+      </ng-container>
+      <ng-template #mobileLogin>
+        <button
+          pButton
+          class="flex align-items-center gap-2 justify-content-center"
+          routerLink="/login"
+          (click)="sidebarVisible = false"
+        >
+          <i class="pi pi-sign-in"></i>
+          <span>تسجيل</span>
+        </button>
+      </ng-template>
     </div>
   </div>
-  <div class="login border-round px-5 py-3 text-center">
-    <p>
-      <i class="pi pi-sign-in"></i>
-      <a routerLink="/login"> تسجيل</a>
-    </p>
-  </div>
-  <nav class="flex flex-column gap-4 my-5 px-3">
-    <a
-      *ngFor="let link of navLinks"
-      [routerLink]="link.route"
-      routerLinkActive="active"
-      class="px-2 py-2 border-round transition-colors duration-200"
-    >
-      {{ link.label }}
-    </a>
-  </nav>
 </p-sidebar>
