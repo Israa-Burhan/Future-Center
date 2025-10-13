@@ -51,31 +51,6 @@ export class DashboardAdminComponent implements OnInit {
     this.isBrowser = isPlatformBrowser(platformId);
   }
 
-  // menuItems = [
-  //   { label: 'الرئيسية', icon: 'pi pi-home', route: 'dashboard' },
-  //   { label: 'إضافة طالب', icon: 'pi pi-user-plus', route: 'students' },
-  //   {
-  //     label: ' المعلمين',
-  //     icon: 'pi pi-users',
-  //     route: 'teachers',
-  //   },
-  //   { label: 'جدولة الحصص', icon: 'pi pi-book', route: 'classes' },
-  //   { label: 'السجلات', icon: 'pi pi-file', route: 'enrollments' },
-  //   {
-  //     label: 'الحضور والغياب',
-  //     icon: 'pi pi-file-check',
-  //     route: 'attendance',
-  //   },
-  //   {
-  //     label: 'المدفوعات',
-  //     icon: 'pi pi-dollar',
-  //     route: 'payments',
-  //   },
-  //   { label: 'المصروفات', icon: 'pi pi-credit-card', route: 'expenses' },
-  //   { label: 'التقارير', icon: 'pi pi-chart-bar', route: 'reports' },
-  //   { label: 'الرسائل', icon: 'pi pi-envelope', route: 'messaging' },
-  //   { label: 'الإعدادات', icon: 'pi pi-cog', route: 'settings' },
-  // ];
   ngOnInit(): void {
     if (this.isBrowser) {
       const saved = localStorage.getItem('admin.sidebar.collapsed');

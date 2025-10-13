@@ -53,7 +53,7 @@ export const adminRoutes: Routes = [
           ),
         data: {
           roles: ['admin'],
-          nav: { label: 'الصفوف', icon: 'pi pi-book', order: 4 },
+          nav: { label: 'جدولة الحصص', icon: 'pi pi-book', order: 4 },
         },
       },
       {
