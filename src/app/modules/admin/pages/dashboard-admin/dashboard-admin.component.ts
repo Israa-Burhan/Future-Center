@@ -6,12 +6,11 @@ import {
   PLATFORM_ID,
 } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Router, ActivatedRoute, RouterModule, Route } from '@angular/router';
 import { InputTextModule } from 'primeng/inputtext';
-
-import { AuthService } from '../../../../modules/auth/services/auth.service';
-import { supabase } from '../../../../core/services/supabase.client';
+import { Router, ActivatedRoute, RouterModule, Route } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
+import { AuthService } from '../../../auth/services/auth.service';
+import { supabase } from '../../../../core/services/supabase.client';
 
 type NavMeta = {
   label?: string;
@@ -26,7 +25,6 @@ interface MenuItem {
   order: number;
 }
 type Role = 'admin' | 'staff';
-
 @Component({
   selector: 'app-dashboard-admin',
   standalone: true,
@@ -53,34 +51,31 @@ export class DashboardAdminComponent implements OnInit {
     this.isBrowser = isPlatformBrowser(platformId);
   }
 
-  menuItems = [
-    { label: 'الرئيسية', icon: 'pi pi-home', route: 'dashboard' },
-    { label: 'إضافة طالب', icon: 'pi pi-user-plus', route: 'students' },
-    {
-      label: ' المعلمين',
-      icon: 'pi pi-users',
-      route: 'teachers',
-    },
-    { label: 'جدولة الحصص', icon: 'pi pi-book', route: 'classes' },
-    { label: 'السجلات', icon: 'pi pi-file', route: 'enrollments' },
-    {
-      label: 'الحضور والغياب',
-      icon: 'pi pi-file-check',
-      route: 'attendance',
-    },
-    {
-      label: 'المدفوعات',
-      icon: 'pi pi-dollar',
-      route: 'payments',
-    },
-    { label: 'المصروفات', icon: 'pi pi-credit-card', route: 'expenses' },
-    { label: 'التقارير', icon: 'pi pi-chart-bar', route: 'reports' },
-    { label: 'الرسائل', icon: 'pi pi-envelope', route: 'messaging' },
-    { label: 'الإعدادات', icon: 'pi pi-cog', route: 'settings' },
-  ];
-
-  @HostListener('window:resize', ['$event'])
-  onResize() {
+  // menuItems = [
+  //   { label: 'الرئيسية', icon: 'pi pi-home', route: 'dashboard' },
+  //   { label: 'إضافة طالب', icon: 'pi pi-user-plus', route: 'students' },
+  //   {
+  //     label: ' المعلمين',
+  //     icon: 'pi pi-users',
+  //     route: 'teachers',
+  //   },
+  //   { label: 'جدولة الحصص', icon: 'pi pi-book', route: 'classes' },
+  //   { label: 'السجلات', icon: 'pi pi-file', route: 'enrollments' },
+  //   {
+  //     label: 'الحضور والغياب',
+  //     icon: 'pi pi-file-check',
+  //     route: 'attendance',
+  //   },
+  //   {
+  //     label: 'المدفوعات',
+  //     icon: 'pi pi-dollar',
+  //     route: 'payments',
+  //   },
+  //   { label: 'المصروفات', icon: 'pi pi-credit-card', route: 'expenses' },
+  //   { label: 'التقارير', icon: 'pi pi-chart-bar', route: 'reports' },
+  //   { label: 'الرسائل', icon: 'pi pi-envelope', route: 'messaging' },
+  //   { label: 'الإعدادات', icon: 'pi pi-cog', route: 'settings' },
+  // ];
   ngOnInit(): void {
     if (this.isBrowser) {
       const saved = localStorage.getItem('admin.sidebar.collapsed');
@@ -90,7 +85,6 @@ export class DashboardAdminComponent implements OnInit {
     void this.buildMenuFromRoutes();
     void this.initUserInfo();
   }
-
 
   private async buildMenuFromRoutes() {
     const role = await this.auth.getRole().catch(() => null);
@@ -141,6 +135,13 @@ export class DashboardAdminComponent implements OnInit {
     localStorage.setItem('admin.sidebar.collapsed', String(this.isCollapsed));
   }
 
+  // @HostListener('window:resize', ['$event'])
+  // onResize() {
+  //   if (this.isBrowser) {
+  //     this.isCollapsed = window.innerWidth < 992;
+  //   }
+  // }
+
   expandSidebar() {
     if (this.isCollapsed) this.isExpanded = true;
   }
@@ -149,12 +150,10 @@ export class DashboardAdminComponent implements OnInit {
     if (this.isCollapsed) this.isExpanded = false;
   }
 
-  ngOnInit() {
-    document.body.classList.add('dashboard-active');
-  }
-
   ngOnDestroy() {
     document.body.classList.remove('dashboard-active');
+  }
+
   async signOut() {
     await this.auth.logout();
     this.router.navigate(['/login']);
