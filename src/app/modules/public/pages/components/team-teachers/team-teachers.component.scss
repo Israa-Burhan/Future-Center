@@ -24,24 +24,34 @@
     font-weight: 500;
   }
   .teacher-card {
-    border: 1px solid var(--primary-200);
+    border: none;
     background: #fff;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.3s ease, border 0.3s ease;
 
     &:hover {
       transform: translateY(-5px);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+      border: 1px solid var(--primary-500);
     }
 
     .image-wrapper {
-      width: 120px;
-      height: 120px;
       margin: 0 auto;
-
+      height: 400px;
+      position: relative;
       .teacher-img {
         width: 100%;
         height: 100%;
         object-fit: cover;
+      }
+      .teacher-experience {
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: auto;
+        background: var(--brand-gold);
+        color: var(--dark-ink);
+        padding: 0.4rem 0.8rem;
+        border-radius: 8px;
+        font-weight: 600;
       }
     }
 

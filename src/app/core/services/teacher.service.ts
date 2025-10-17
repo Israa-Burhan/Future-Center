@@ -23,13 +23,13 @@ export class TeacherService {
       ],
       experience: 7,
       university: 'جامعة الأقصر',
-      image: '/assets/images/teachers/محمد حسين.jpg',
+      image: '../../../assets/images/teachers/mohamed-hussein.png',
       desc: 'يركز على تنمية التفكير العلمي لدى الطلاب من خلال التجارب والأمثلة الواقعية، وتشغل حاليًا منصب منسقة العلوم في المنصة التعليمية.',
     },
     {
       id: 2,
       name: 'أ. محمد ابراهيم عبيد بشير',
-      title: 'محمد بشير ',
+      title: 'مدرس العلوم',
       subjects: [
         {
           name: ' العلوم',
@@ -39,7 +39,7 @@ export class TeacherService {
       ],
       experience: 4,
       university: 'جامعة الأزهر',
-      image: '/assets/images/teachers/محمد بشير.jpg',
+      image: '../../../assets/images/teachers/mohamed-basher.png',
       desc: 'طالب ماجستير قسم علم النفس التعليمي بكلية التربية جامعة الأزهر',
     },
     {
@@ -54,7 +54,7 @@ export class TeacherService {
       ],
       experience: 3,
       university: 'جامعة الأقصر',
-      image: '/assets/images/teachers/محمود عبدالموجود.jpg',
+      image: '../../../assets/images/teachers/mahmoud-abdelmougod.png',
       desc: 'مدرس في مدرسة الاقالته الاعدادية المشتركة',
     },
     {
@@ -69,7 +69,7 @@ export class TeacherService {
       ],
       experience: 4,
       university: 'جامعة الأقصر',
-      image: '/assets/images/teachers/احمد طايع.jpg',
+      image: '../../../assets/images/teachers/ahmed-tayea.png',
       desc: 'مدرس في مدرسة القرنه بنين الاعدادية ',
     },
     {
@@ -82,9 +82,9 @@ export class TeacherService {
           teaching_scope: 'جميع المراحل التعليمية',
         },
       ],
-      experience: 7,
+      experience: 4,
       university: 'جامعة الأقصر',
-      image: '/assets/images/teachers/omar.jpg',
+      image: '../../../assets/images/teachers/omar-ebad.png',
       desc: 'مدرس فس سنتر فيوتشر التعليمي',
     },
     {
@@ -99,7 +99,7 @@ export class TeacherService {
       ],
       experience: 7,
       university: 'جامعة الأقصر',
-      image: '/assets/images/teachers/omar.jpg',
+      image: '../../../assets/images/teachers/abo-bakr.png',
       desc: 'تركز على تنمية التفكير العلمي لدى الطلاب من خلال التجارب والأمثلة الواقعية، وتشغل حاليًا منصب منسقة العلوم في المنصة التعليمية.',
     },
     {
@@ -115,7 +115,7 @@ export class TeacherService {
 
       experience: 7,
       university: 'جامعة الأقصر',
-      image: '/assets/images/teachers/احمد عبدالمطلب.jpg',
+      image: '../../../assets/images/teachers/ahmed-mohamed.png',
       desc: 'تركز على تنمية التفكير العلمي لدى الطلاب من خلال التجارب والأمثلة الواقعية، وتشغل حاليًا منصب منسقة العلوم في المنصة التعليمية.',
     },
   ];

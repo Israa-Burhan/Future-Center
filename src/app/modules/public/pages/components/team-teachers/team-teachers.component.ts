@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CarouselModule } from 'primeng/carousel';
 import { Teacher } from '../../../../../core/models/teacher.model';
@@ -12,7 +12,7 @@ import { TeacherService } from '../../../../../core/services/teacher.service';
   templateUrl: './team-teachers.component.html',
   styleUrl: './team-teachers.component.scss',
 })
-export class TeamTeachersComponent {
+export class TeamTeachersComponent implements OnInit {
   teachers: Teacher[] = [];
   responsiveOptions: any[] | undefined;
   constructor(private teacherService: TeacherService) {}
@@ -22,7 +22,7 @@ export class TeamTeachersComponent {
     });
 
     this.responsiveOptions = [
-      { breakpoint: '1199px', numVisible: 3, numScroll: 1 },
+      { breakpoint: '1400px', numVisible: 3, numScroll: 1 },
       { breakpoint: '991px', numVisible: 2, numScroll: 1 },
       { breakpoint: '767px', numVisible: 1, numScroll: 1 },
     ];
