@@ -1,1 +1,260 @@
-<p>messaging works!</p>
+<section class="msg-wrap">
+  <div class="container">
+    <div class="toolbar mt-6 lg:my-6">
+      <div class="filters">
+        <span class="search-field col-12 md:col-6 lg:col-4">
+          <input
+            pInputText
+            type="text"
+            placeholder="ابحث بالاسم أو الهاتف أو البريد أو الموضوع أو النص..."
+            [value]="search()"
+            (input)="onSearchInput($event)"
+            (keydown.enter)="onSearch()"
+          />
+        </span>
+        <span class="date-field col-12 md:col-6 lg:col-4">
+          <p-calendar
+            selectionMode="range"
+            placeholder="حدد مدى التاريخ"
+            [appendTo]="'body'"
+            [ngModel]="dateRange()"
+            (onSelect)="onDateSelect($event)"
+            (onClearClick)="onDateClear()"
+          ></p-calendar>
+        </span>
+        <div class="actions col-12">
+          <button
+            pButton
+            label="تطبيق الفلتر"
+            icon="pi pi-filter"
+            class="p-button-primary"
+            (click)="onSearch()"
+          ></button>
+          <button
+            pButton
+            label="مسح الفلتر"
+            icon="pi pi-times"
+            class="p-button-secondary"
+            (click)="onClearFilters()"
+          ></button>
+        </div>
+      </div>
+    </div>
+
+    <p-table
+      [value]="data"
+      [lazy]="true"
+      (onLazyLoad)="onLazy($event)"
+      [paginator]="true"
+      [rows]="rows"
+      [totalRecords]="totalRecords"
+      [loading]="loading"
+      sortMode="single"
+      [sortField]="sortField"
+      [sortOrder]="sortOrder"
+      responsiveLayout="scroll"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th class="text-center" pSortableColumn="created_at" id="created_at">
+            التاريخ والوقت <p-sortIcon field="created_at"></p-sortIcon>
+          </th>
+          <th class="text-center" pSortableColumn="name" id="name">
+            الاسم <p-sortIcon field="name"></p-sortIcon>
+          </th>
+          <th class="text-center" id="phone">الهاتف</th>
+          <th class="text-center" id="email">البريد</th>
+          <th class="text-center" pSortableColumn="subject" id="subject">
+            الموضوع <p-sortIcon field="subject"></p-sortIcon>
+          </th>
+          <th class="text-center" id="message">نص الرسالة (مقتطف)</th>
+          <th class="text-center" id="action">إجراء</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-message>
+        <tr>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                التاريخ والوقت
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">
+                  {{ fmt(message.created_at) }}
+                </p>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">الاسم</p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">
+                  {{ message.name }}
+                </p>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                الهاتف
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">
+                  <a
+                    *ngIf="message.phone"
+                    [href]="'tel:' + message.phone"
+                    class="link"
+                    >{{ message.phone }}</a
+                  >
+                </p>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                البريد
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">
+                  <a
+                    *ngIf="message.email"
+                    [href]="'mailto:' + message.email"
+                    class="link"
+                    >{{ message.email }}</a
+                  >
+                </p>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                الموضوع
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">
+                  {{ message.subject || "-" }}
+                </p>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                الرسالة
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">
+                  {{ message.message || "-" }}
+                </p>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                الاجراء
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">
+                  <button
+                    pButton
+                    icon="pi pi-eye"
+                    class="p-button-text"
+                    (click)="view(message)"
+                    title="عرض"
+                  ></button>
+                </p>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="7" class="empty">لا توجد رسائل.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+
+    <p-dialog
+      [(visible)]="showView"
+      [modal]="true"
+      [dismissableMask]="true"
+      [closable]="true"
+      (onHide)="closeDialog()"
+      header="تفاصيل الرسالة"
+      [draggable]="false"
+      [resizable]="false"
+      [style]="{ width: '40vw' }"
+      [breakpoints]="{
+        '1200px': '50vw',
+        '960px': '65vw',
+        '640px': '90vw'
+      }"
+    >
+      <div *ngIf="selected as s" class="view-box">
+        <div class="row">
+          <span class="k">التاريخ:</span
+          ><span class="v">{{ fmt(s.created_at) }}</span>
+        </div>
+        <div class="row">
+          <span class="k">الاسم:</span><span class="v">{{ s.name }}</span>
+        </div>
+        <div class="row" *ngIf="s.phone">
+          <span class="k">الهاتف:</span
+          ><span class="v"
+            ><a [href]="'tel:' + s.phone">{{ s.phone }}</a></span
+          >
+        </div>
+        <div class="row" *ngIf="s.email">
+          <span class="k">البريد: </span
+          ><span class="v"
+            ><a [href]="'mailto:' + s.email">{{ s.email }}</a></span
+          >
+        </div>
+        <div class="row">
+          <span class="k">الموضوع:</span
+          ><span class="v">{{ s.subject || "-" }}</span>
+        </div>
+        <div class="row msg">
+          <span class="k">النص:</span>
+          <span class="v pre-wrap">{{ s.message }}</span>
+        </div>
+      </div>
+    </p-dialog>
+  </div>
+</section>

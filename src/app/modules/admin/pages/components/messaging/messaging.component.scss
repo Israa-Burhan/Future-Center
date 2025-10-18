@@ -1,0 +1,146 @@
+@mixin table_border() {
+  &:first-of-type {
+    border-start-start-radius: 16px;
+    border-end-start-radius: 16px;
+  }
+
+  &:last-of-type {
+    border-start-end-radius: 16px;
+    border-end-end-radius: 16px;
+  }
+}
+.msg-wrap {
+  ::ng-deep {
+    .p-datatable-thead {
+      height: 40px;
+    }
+    .p-datatable-gridlines .p-datatable-tbody > tr > td,
+    .p-datatable-gridlines .p-datatable-thead > tr > th {
+      padding: 1rem;
+    }
+    .p-datatable .p-datatable-thead > tr > th {
+      border-bottom: 3px solid var(--primary-200);
+    }
+    .p-datatable-wrapper::-webkit-scrollbar {
+      height: 8px;
+    }
+    .p-button .p-button-icon.pi {
+      margin-left: 5px;
+    }
+
+    .p-datatable .p-datatable-loading-overlay {
+      top: 75px !important;
+    }
+    tbody > tr > td {
+      border: 1px solid #ffffff !important;
+      padding: 16px !important;
+      @include table_border();
+    }
+
+    .p-datatable-table {
+      border-spacing: 0 1em !important;
+      margin-bottom: 0px !important;
+    }
+    .p-sortable-column[aria-sort="descending"] .pi-sort:before {
+      content: "\e919" !important;
+    }
+
+    .p-sortable-column[aria-sort="ascending"] .pi-sort:before {
+      content: "\e91c" !important;
+    }
+
+    .row_data {
+      font-size: 14px !important;
+      font-weight: 600;
+      margin-bottom: 0px;
+    }
+
+    .p-datatable .p-datatable-tbody > tr {
+      background: #fff;
+      box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.1);
+      border-radius: 16px !important;
+      border: 1px solid var(--primary-focus) !important;
+    }
+
+    .p-datatable-header {
+      background: none !important;
+      border: none !important;
+    }
+    .p-datatable-thead > tr > th {
+      background-color: var(--primary-focus);
+      color: var(--white) !important;
+      font-size: 12px !important;
+      text-align: start;
+      padding: 16px !important;
+      @include table_border();
+    }
+
+    @media (max-width: 992px) {
+      .row_data {
+        margin-bottom: 10px;
+      }
+
+      p-button.view_btn {
+        background-color: #fcecfa;
+        border-radius: 16px !important;
+      }
+
+      tbody > tr {
+        display: flex;
+        flex-flow: column wrap;
+        width: 100%;
+        margin-bottom: 20px !important;
+        padding: 10px;
+      }
+
+      tbody > tr > td {
+        padding: 0px 1rem !important;
+      }
+
+      thead tr {
+        display: none;
+      }
+    }
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      background: #f9fafb;
+      padding: 1rem;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+      border: 1px solid #e5e7eb;
+      .search-field {
+        input {
+          width: 100%;
+          border-radius: 10px;
+          padding: 16px;
+          box-shadow: none;
+        }
+      }
+      .date-field {
+        .p-calendar {
+          width: 100%;
+          input {
+            width: 100%;
+            border-radius: 10px;
+            padding: 16px;
+            box-shadow: none;
+          }
+        }
+      }
+
+      .actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        button {
+          border-radius: 8px;
+          font-weight: 600;
+          padding: 16px;
+          box-shadow: none;
+        }
+      }
+    }
+  }
+}
