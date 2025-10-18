@@ -4,292 +4,303 @@
   [baseZIndex]="1000"
 ></p-confirmDialog>
 <div class="schedule-classes">
-  <div class="text-center mb-5">
-    <h2 class="font-bold text-900">لوحة تحكم جدولة الحصص</h2>
-  </div>
-
-  <p-card
-    [header]="isEditing ? 'تعديل الموعد الحالي' : 'إضافة موعد جديد'"
-    class="shadow-4 border-round-2xl surface-card mb-6 p-0"
-  >
-    <div class="p-fluid grid formgrid">
-      <div class="field col-12 md:col-6">
-        <label for="teacher" class="font-semibold text-lg mb-2 block"
-          >اختيار المعلم: <span class="text-red-500">*</span></label
-        >
-        <p-dropdown
-          id="teacher"
-          [options]="teachersList"
-          optionLabel="name"
-          optionValue="id"
-          placeholder="اختر المعلم المراد جدولة حصصه"
-          [(ngModel)]="newSchedule.teacherId"
-          (onChange)="onTeacherChange($event)"
-          [showClear]="true"
-          class="w-full"
-        >
-        </p-dropdown>
-      </div>
-
-      <div class="field col-12 md:col-6">
-        <label for="subject" class="font-semibold text-lg mb-2 block"
-          >اختيار المادة: <span class="text-red-500">*</span></label
-        >
-        <p-dropdown
-          id="subject"
-          [options]="availableSubjectsNames"
-          placeholder="اختر المادة المراد جدولة حصصه"
-          [(ngModel)]="newSchedule.subjectName"
-          (onChange)="onSubjectChange($event)"
-          [disabled]="!newSchedule.teacherId"
-          [showClear]="true"
-          class="w-full"
-        >
-        </p-dropdown>
-      </div>
-
-      <div class="field col-12 md:col-4">
-        <label for="level" class="font-semibold text-lg mb-2 block"
-          >المرحلة التعليمية: <span class="text-red-500">*</span></label
-        >
-        <p-dropdown
-          id="level"
-          [options]="educationalLevels"
-          [(ngModel)]="selectedEducationalLevel"
-          (onChange)="onLevelChange($event)"
-          placeholder="اختر المرحلة"
-          optionLabel="label"
-          optionValue="value"
-          [disabled]="!newSchedule.subjectName"
-          [showClear]="true"
-          class="w-full"
-        ></p-dropdown>
-      </div>
-
-      <div class="field col-12 md:col-4">
-        <label for="scope" class="font-semibold text-lg mb-2 block"
-          >الصف المطلوب للحصة: <span class="text-red-500">*</span></label
-        >
-        <p-dropdown
-          id="scope"
-          [options]="availableClassScopes"
-          [(ngModel)]="selectedSubjectScope"
-          (onChange)="onScopeChange($event)"
-          placeholder="اختر الصف"
-          [disabled]="!availableClassScopes.length"
-          [showClear]="true"
-          class="w-full"
-        ></p-dropdown>
-      </div>
-
-      <div class="field col-12 md:col-4">
-        <label for="className" class="font-semibold text-lg mb-2 block"
-          >عنوان الحصة (اختياري):</label
-        >
-        <input
-          id="className"
-          type="text"
-          pInputText
-          placeholder="مثال: مراجعة الوحدة الأولى"
-          class="w-full"
-          [(ngModel)]="newSchedule.className"
-        />
-      </div>
-
-      <div class="field col-12 md:col-6">
-        <label for="day" class="font-semibold text-lg mb-2 block"
-          >اليوم: <span class="text-red-500">*</span></label
-        >
-        <p-dropdown
-          id="day"
-          [options]="daysOfWeek"
-          placeholder="اختر يوم الحصة"
-          [(ngModel)]="newSchedule.day"
-          [showClear]="true"
-          class="w-full"
-        >
-        </p-dropdown>
-      </div>
-
-      <div class="field col-12 md:col-6">
-        <label for="startTime" class="font-semibold text-lg mb-2 block"
-          >وقت البدء: <span class="text-red-500">*</span></label
-        >
-        <p-calendar
-          id="startTime"
-          [timeOnly]="true"
-          hourFormat="24"
-          placeholder="وقت بدء الحصة"
-          [(ngModel)]="newSchedule.startTime"
-          class="w-full"
-        >
-        </p-calendar>
-      </div>
-
-      <div class="col-12 mt-4 text-center flex justify-content-center gap-3">
-        <p-button
-          [label]="isEditing ? 'حفظ التعديلات' : 'إضافة الموعد الجديد وجدولته'"
-          icon="pi pi-check"
-          [styleClass]="
-            isEditing
-              ? 'p-button-lg p-button-warning'
-              : 'p-button-lg p-button-primary'
-          "
-          [disabled]="
-            !newSchedule.teacherId ||
-            !newSchedule.subjectName ||
-            !selectedSubjectScope ||
-            !newSchedule.day ||
-            !newSchedule.startTime
-          "
-          (onClick)="saveSchedule()"
-        >
-        </p-button>
-
-        <p-button
-          *ngIf="isEditing"
-          label="إلغاء التعديل"
-          icon="pi pi-times"
-          styleClass="p-button-lg p-button-secondary p-button-outlined"
-          (onClick)="cancelEdit()"
-        >
-        </p-button>
-      </div>
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="font-bold text-900">لوحة تحكم جدولة الحصص</h2>
     </div>
-  </p-card>
 
-  <p-table
-    [value]="currentSchedules"
-    [paginator]="true"
-    [rows]="10"
-    styleClass="p-datatable-gridlines p-datatable-striped"
-  >
-    <ng-template pTemplate="caption">
-      <h3 class="font-bold text-center text-xl">جميع الحصص المجدولة</h3>
-      <p-divider></p-divider>
-    </ng-template>
+    <p-card [header]="isEditing ? 'تعديل الموعد الحالي' : 'إضافة موعد جديد'">
+      <form [formGroup]="scheduleForm" class="p-fluid grid formgrid">
+        <div class="field col-12 md:col-6">
+          <label for="teacher" class="font-semibold text-lg mb-2 block">
+            اختيار المعلم <span class="text-red-500">*</span>
+          </label>
+          <p-dropdown
+            id="teacher"
+            [options]="teachersList"
+            optionLabel="name"
+            optionValue="id"
+            placeholder="اختر المعلم المراد جدولة حصصه"
+            formControlName="teacherId"
+            [showClear]="true"
+            class="w-full"
+          >
+          </p-dropdown>
+          <app-validation-message
+            [control]="scheduleForm.get('teacherId')"
+          ></app-validation-message>
+        </div>
 
-    <ng-template pTemplate="header">
-      <tr>
-        <th [style]="{ width: '200px' }" class="text-center">المعلم</th>
-        <th class="text-center">المادة</th>
-        <th [style]="{ width: '200px' }" class="text-center">الصف</th>
-        <th class="text-center">اليوم</th>
-        <th class="text-center">الوقت</th>
-        <th class="text-center">عنوان الحصة</th>
-        <th class="text-center">إجراءات</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-schedule>
-      <tr>
-        <td>
-          <div
-            class="flex lg:justify-content-center justify-content-between flex-row"
+        <div class="field col-12 md:col-6">
+          <label for="subject" class="font-semibold text-lg mb-2 block">
+            اختيار المادة <span class="text-red-500">*</span>
+          </label>
+          <p-dropdown
+            id="subject"
+            [options]="availableSubjectsNames"
+            placeholder="اختر المادة المراد جدولة حصصه"
+            formControlName="subjectName"
+            [disabled]="!scheduleForm.get('teacherId')?.value"
+            [showClear]="true"
+            class="w-full"
+            [emptyMessage]="'لا توجد مواد'"
           >
-            <p class="lg:hidden sm:inline row_data start-list w-max">المعلم</p>
-            <div
-              class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
-            >
-              <p class="row_data mb-0">
-                {{ schedule.teacher_name }}
-              </p>
-            </div>
-          </div>
-        </td>
-        <td>
-          <div
-            class="flex lg:justify-content-center justify-content-between flex-row"
+          </p-dropdown>
+          <app-validation-message
+            [control]="scheduleForm.get('subjectName')"
+          ></app-validation-message>
+        </div>
+
+        <div class="field col-12 md:col-4">
+          <label for="level" class="font-semibold text-lg mb-2 block">
+            المرحلة التعليمية <span class="text-red-500">*</span>
+          </label>
+          <p-dropdown
+            id="level"
+            [options]="educationalLevels"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="اختر المرحلة"
+            formControlName="educationalLevel"
+            [disabled]="!scheduleForm.get('subjectName')?.value"
+            [showClear]="true"
+            class="w-full"
           >
-            <p class="lg:hidden sm:inline row_data start-list w-max">المادة</p>
-            <div
-              class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
-            >
-              <p class="row_data mb-0">
-                {{ schedule.subject }}
-              </p>
-            </div>
-          </div>
-        </td>
-        <td>
-          <div
-            class="flex lg:justify-content-center justify-content-between flex-row"
+          </p-dropdown>
+          <app-validation-message
+            [control]="scheduleForm.get('educationalLevel')"
+          ></app-validation-message>
+        </div>
+
+        <div class="field col-12 md:col-4">
+          <label for="scope" class="font-semibold text-lg mb-2 block">
+            الصف المطلوب للحصة <span class="text-red-500">*</span>
+          </label>
+          <p-dropdown
+            id="scope"
+            [options]="availableClassScopes"
+            placeholder="اختر الصف"
+            formControlName="subjectScope"
+            [disabled]="!availableClassScopes.length"
+            [showClear]="true"
+            class="w-full"
+            [emptyMessage]="'لا توجد صفوف'"
           >
-            <p class="lg:hidden sm:inline row_data start-list w-max">الصف</p>
-            <div
-              class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
-            >
-              <p class="row_data mb-0">
-                {{ schedule.class_level_scope }}
-              </p>
-            </div>
-          </div>
-        </td>
-        <td>
-          <div
-            class="flex lg:justify-content-center justify-content-between flex-row"
+          </p-dropdown>
+          <app-validation-message
+            [control]="scheduleForm.get('subjectScope')"
+          ></app-validation-message>
+        </div>
+
+        <div class="field col-12 md:col-4">
+          <label for="className" class="font-semibold text-lg mb-2 block"
+            >عنوان الحصة (اختياري)</label
           >
-            <p class="lg:hidden sm:inline row_data start-list w-max">اليوم</p>
-            <div
-              class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
-            >
-              <p class="row_data mb-0">
-                {{ schedule.day }}
-              </p>
-            </div>
-          </div>
-        </td>
-        <td>
-          <div
-            class="flex lg:justify-content-center justify-content-between flex-row"
+          <input
+            id="className"
+            type="text"
+            pInputText
+            placeholder="مثال: مراجعة الوحدة الأولى"
+            formControlName="className"
+            class="w-full"
+          />
+        </div>
+
+        <div class="field col-12 md:col-6">
+          <label for="day" class="font-semibold text-lg mb-2 block">
+            اليوم <span class="text-red-500">*</span>
+          </label>
+          <p-dropdown
+            id="day"
+            [options]="daysOfWeek"
+            placeholder="اختر يوم الحصة"
+            formControlName="day"
+            [showClear]="true"
+            class="w-full"
           >
-            <p class="lg:hidden sm:inline row_data start-list w-max">الوقت</p>
-            <div
-              class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
-            >
-              <p class="row_data mb-0">
-                {{ schedule.start_time }}
-              </p>
-            </div>
-          </div>
-        </td>
-        <td>
-          <div
-            class="flex lg:justify-content-center justify-content-between flex-row"
+          </p-dropdown>
+          <app-validation-message
+            [control]="scheduleForm.get('day')"
+          ></app-validation-message>
+        </div>
+
+        <div class="field col-12 md:col-6">
+          <label for="startTime" class="font-semibold text-lg mb-2 block">
+            وقت البدء <span class="text-red-500">*</span>
+          </label>
+          <p-calendar
+            id="startTime"
+            [timeOnly]="true"
+            hourFormat="24"
+            placeholder="وقت بدء الحصة"
+            formControlName="startTime"
+            class="w-full"
           >
-            <p class="lg:hidden sm:inline row_data start-list w-max">
-              عنوان الحصة
-            </p>
+          </p-calendar>
+          <app-validation-message
+            [control]="scheduleForm.get('startTime')"
+          ></app-validation-message>
+        </div>
+
+        <div class="col-12 mt-4 text-center flex justify-content-start gap-3">
+          <p-button
+            [label]="saveLabel"
+            icon="pi pi-check"
+            [styleClass]="saveClass"
+            [disabled]="disableSave"
+            (onClick)="saveSchedule()"
+          >
+          </p-button>
+
+          <p-button
+            *ngIf="isEditing"
+            label="إلغاء التعديل"
+            icon="pi pi-times"
+            styleClass="p-button-lg p-button-secondary p-button-outlined"
+            (onClick)="cancelEdit()"
+          >
+          </p-button>
+        </div>
+      </form>
+    </p-card>
+    <p-table
+      [value]="currentSchedules"
+      [paginator]="true"
+      [rows]="10"
+      styleClass="p-datatable-gridlines p-datatable-striped py-5"
+    >
+      <ng-template pTemplate="caption">
+        <h3 class="font-bold text-center text-xl">جميع الحصص المجدولة</h3>
+      </ng-template>
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th [style]="{ width: '200px' }" class="text-center">المعلم</th>
+          <th class="text-center">المادة</th>
+          <th [style]="{ width: '200px' }" class="text-center">الصف</th>
+          <th class="text-center">اليوم</th>
+          <th class="text-center">الوقت</th>
+          <th class="text-center">عنوان الحصة</th>
+          <th class="text-center">إجراءات</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-schedule>
+        <tr>
+          <td>
             <div
-              class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              class="flex lg:justify-content-center justify-content-between flex-row"
             >
-              <p class="row_data mb-0">
-                {{ schedule.class_name || "-" }}
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                المعلم
               </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">
+                  {{ schedule.teacher_name }}
+                </p>
+              </div>
             </div>
-          </div>
-        </td>
-        <td>
-          <div class="flex justify-content-center gap-2">
-            <p-button
-              icon="pi pi-pencil "
-              styleClass="p-button-sm p-button-info p-button-text"
-              label="تعديل"
-              (onClick)="setScheduleForEdit(schedule)"
-            ></p-button>
-            <p-button
-              icon="pi pi-trash"
-              styleClass="p-button-sm p-button-danger p-button-text"
-              label="حذف"
-              (click)="deleteSchedule(schedule.id)"
-            ></p-button>
-          </div>
-        </td>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="emptymessage">
-      <tr>
-        <td colspan="7" class="text-center p-4">لا توجد حصص مجدولة حاليًا.</td>
-      </tr>
-    </ng-template>
-  </p-table>
+          </td>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                المادة
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">
+                  {{ schedule.subject }}
+                </p>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">الصف</p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">
+                  {{ schedule.class_level_scope }}
+                </p>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">اليوم</p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">
+                  {{ schedule.day }}
+                </p>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">الوقت</p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">
+                  {{ schedule.start_time }}
+                </p>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                عنوان الحصة
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">
+                  {{ schedule.class_name || "-" }}
+                </p>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="flex justify-content-center gap-2">
+              <p-button
+                icon="pi pi-pencil "
+                styleClass="p-button-sm p-button-info p-button-text"
+                label="تعديل"
+                (onClick)="setScheduleForEdit(schedule)"
+              ></p-button>
+              <p-button
+                icon="pi pi-trash"
+                styleClass="p-button-sm p-button-danger p-button-text"
+                label="حذف"
+                (onClick)="deleteSchedule(schedule.id)"
+              ></p-button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="7" class="text-center p-4">
+            لا توجد حصص مجدولة حاليًا.
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
 </div>

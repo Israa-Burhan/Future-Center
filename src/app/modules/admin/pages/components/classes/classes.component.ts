@@ -1,29 +1,45 @@
-import { Component, OnInit } from '@angular/core';
-import { TeacherService } from '../../../../../core/services/teacher.service';
-import {
-  Teacher,
-  ClassSchedule,
-  SubjectDetail,
-} from '../../../../../core/models/teacher.model';
+import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+
 import { CardModule } from 'primeng/card';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
 import { CalendarModule } from 'primeng/calendar';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { MessageService, SelectItem, ConfirmationService } from 'primeng/api';
 import { DividerModule } from 'primeng/divider';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ConfirmationService, MessageService, SelectItem } from 'primeng/api';
+
+import { forkJoin } from 'rxjs';
+
+import { TeacherService } from '../../../../../core/services/teacher.service';
+import {
+  Teacher,
+  ClassSchedule,
+  SubjectDetail,
+} from '../../../../../core/models/teacher.model';
+import { ValidationMessagePage } from '../../../../shared/components/validation-message/validation-message.page';
+import { RxwebValidators } from '@rxweb/reactive-form-validators';
+
+type ScheduleDTO = {
+  id: number | string;
+  teacher_id: number;
+  subject: string;
+  day: string;
+  start_time: string;
+  class_level_scope?: string;
+  class_name?: string | null;
+};
 
 @Component({
   selector: 'app-classes',
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
+    ReactiveFormsModule,
     CardModule,
     DropdownModule,
     InputTextModule,
@@ -33,35 +49,38 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
     DividerModule,
     ToastModule,
     ConfirmDialogModule,
+    ValidationMessagePage,
   ],
   templateUrl: './classes.component.html',
   styleUrl: './classes.component.scss',
   providers: [MessageService, ConfirmationService],
 })
 export class ClassesComponent implements OnInit {
-  newSchedule: {
-    teacherId: number | null;
-    subjectName: string | null;
-    day: string | null;
-    startTime: Date | null;
-    className: string | null;
-  } = {
-    teacherId: null,
-    subjectName: null,
-    day: null,
-    startTime: null,
-    className: null,
-  };
+  private fb = inject(FormBuilder);
+  private teacherService = inject(TeacherService);
+  private messageService = inject(MessageService);
+  private confirmationService = inject(ConfirmationService);
+
+  scheduleForm = this.fb.group({
+    teacherId: [null as number | null, RxwebValidators.required()],
+    subjectName: [null as string | null, RxwebValidators.required()],
+    educationalLevel: [null as string | null, RxwebValidators.required()],
+    subjectScope: [null as string | null, RxwebValidators.required()],
+    day: [null as string | null, RxwebValidators.required()],
+    startTime: [null as Date | null, RxwebValidators.required()],
+    className: [null as string | null],
+  });
 
   teachersList: Teacher[] = [];
+  private teachersById = new Map<number, Teacher>();
+
   availableSubjectsNames: string[] = [];
-  selectedEducationalLevel: string | null = null;
   availableClassScopes: string[] = [];
-  selectedSubjectScope: string | null = null;
   private selectedTeacherFullData: Teacher | undefined;
   private selectedSubjectDetail: SubjectDetail | undefined;
+
   currentSchedules: ClassSchedule[] = [];
-  isEditing: boolean = false;
+  isEditing = false;
   editingScheduleId: number | null = null;
 
   daysOfWeek: string[] = [
@@ -74,7 +93,7 @@ export class ClassesComponent implements OnInit {
     'السبت',
   ];
 
-  AllClasses: { [key: string]: string[] } = {
+  AllClasses: Record<string, string[]> = {
     ابتدائي: [
       'الصف الأول ابتدائي',
       'الصف الثاني ابتدائي',
@@ -93,121 +112,139 @@ export class ClassesComponent implements OnInit {
     { label: 'ثانوي', value: 'ثانوي' },
   ];
 
-  constructor(
-    private teacherService: TeacherService,
-    private messageService: MessageService,
-    private confirmationService: ConfirmationService
-  ) {}
-
   ngOnInit(): void {
-    this.teacherService.getAllTeachers().subscribe((data) => {
-      this.teachersList = data;
+    forkJoin({
+      teachers: this.teacherService.getAllTeachers(),
+      schedules: this.teacherService.getAllSchedules(),
+    }).subscribe({
+      next: ({ teachers, schedules }) => {
+        this.teachersList = teachers ?? [];
+        this.teachersById = new Map(this.teachersList.map((t) => [t.id, t]));
+        this.currentSchedules = this.hydrateSchedulesWithTeachers(
+          (schedules ?? []) as ScheduleDTO[]
+        );
+      },
     });
-    this.loadCurrentSchedules();
+
+    this.scheduleForm.get('teacherId')!.valueChanges.subscribe((teacherId) => {
+      this.applyTeacherContext(teacherId);
+      this.scheduleForm.patchValue(
+        {
+          subjectName: null,
+          educationalLevel: null,
+          subjectScope: null,
+        },
+        { emitEvent: false }
+      );
+      this.availableClassScopes = [];
+    });
+
+    this.scheduleForm
+      .get('subjectName')!
+      .valueChanges.subscribe((subjectName) => {
+        this.selectedSubjectDetail =
+          this.selectedTeacherFullData?.subjects?.find(
+            (s) => s.name === subjectName
+          );
+
+        this.scheduleForm.patchValue(
+          {
+            educationalLevel: null,
+            subjectScope: null,
+          },
+          { emitEvent: false }
+        );
+        this.availableClassScopes = [];
+      });
+
+    this.scheduleForm.get('educationalLevel')!.valueChanges.subscribe((lvl) => {
+      const list = this.AllClasses[lvl as string] || [];
+      this.availableClassScopes = list;
+      this.scheduleForm.patchValue(
+        { subjectScope: null },
+        { emitEvent: false }
+      );
+    });
   }
 
-  loadCurrentSchedules(): void {
+  private hydrateSchedulesWithTeachers(
+    schedules: ScheduleDTO[]
+  ): ClassSchedule[] {
+    return (schedules || [])
+      .map((s) => {
+        const idNum = Number(s.id);
+        if (Number.isNaN(idNum)) return null;
+
+        const { id, ...rest } = s;
+        const t = this.teachersById.get(s.teacher_id);
+
+        return {
+          id: idNum,
+          ...rest,
+          teacher_name: t ? t.name : `المعلم غير موجود (ID: ${s.teacher_id})`,
+        } as ClassSchedule;
+      })
+      .filter((x): x is ClassSchedule => !!x);
+  }
+
+  private applyTeacherContext(teacherId: number | null): void {
+    this.selectedTeacherFullData = teacherId
+      ? this.teachersById.get(teacherId)
+      : undefined;
+    this.availableSubjectsNames = this.selectedTeacherFullData
+      ? this.selectedTeacherFullData.subjects.map((s) => s.name)
+      : [];
+  }
+
+  private pad2(n: number) {
+    return String(n).padStart(2, '0');
+  }
+  private formatTime24(d: Date): string {
+    return `${this.pad2(d.getHours())}:${this.pad2(d.getMinutes())}:00`;
+  }
+
+  private buildSchedulePayload(): any {
+    const v = this.scheduleForm.value;
+    return {
+      teacher_id: v.teacherId,
+      subject: v.subjectName,
+      day: v.day,
+      start_time: this.formatTime24(v.startTime as Date),
+      class_level_scope: v.subjectScope,
+      class_name: v.className ?? '',
+    };
+  }
+
+  private refreshSchedules(): void {
     this.teacherService.getAllSchedules().subscribe({
-      next: (schedules: any[]) => {
-        this.currentSchedules = schedules
-          .map((schedule: any) => {
-            const teacher = this.teachersList.find(
-              (t) => t.id === schedule.teacher_id
-            );
-
-            const scheduleId = Number(schedule.id);
-            if (isNaN(scheduleId)) {
-              console.warn('تم تجاهل جدول بسبب ID غير صالح:', schedule);
-              return null;
-            }
-
-            return {
-              id: scheduleId,
-              ...schedule,
-              teacher_name: teacher
-                ? teacher.name
-                : 'المعلم غير موجود (ID: ' + schedule.teacher_id + ')',
-            } as ClassSchedule;
-          })
-          .filter((s): s is ClassSchedule => s !== null);
-      },
-      error: (err) => {
-        console.error('فشل في الاتصال لجلب الجداول:', err);
+      next: (schedules: ScheduleDTO[]) => {
+        this.currentSchedules = this.hydrateSchedulesWithTeachers(schedules);
       },
     });
   }
 
-  onTeacherChange(event: any): void {
-    const selectedTeacherId = event.value;
-
-    this.resetFormState(false, true);
-
-    this.newSchedule.teacherId = selectedTeacherId;
-
-    this.selectedTeacherFullData = this.teachersList.find(
-      (t) => t.id === selectedTeacherId
-    );
-
-    if (this.selectedTeacherFullData) {
-      this.availableSubjectsNames = this.selectedTeacherFullData.subjects.map(
-        (s) => s.name
-      );
-    } else {
-      this.availableSubjectsNames = [];
-    }
-  }
-
-  onSubjectChange(event: any): void {
-    const selectedSubjectName = event.value;
-    this.selectedEducationalLevel = null;
-    this.selectedSubjectScope = null;
-    this.availableClassScopes = [];
-    this.selectedSubjectDetail = undefined;
-
-    if (this.selectedTeacherFullData && selectedSubjectName) {
-      this.selectedSubjectDetail = this.selectedTeacherFullData.subjects.find(
-        (s) => s.name === selectedSubjectName
-      );
-    }
-  }
-
-  onLevelChange(event: any): void {
-    const selectedLevel = event.value as string;
-    this.selectedSubjectScope = null;
-    this.availableClassScopes = this.AllClasses[selectedLevel] || [];
-
-    if (this.availableClassScopes.length === 0) {
-      this.selectedSubjectScope = null;
-    }
-  }
-
-  onScopeChange(event: any): void {
-    this.selectedSubjectScope = event.value;
-  }
-
-  resetFormState(
-    resetAll: boolean = true,
-    resetDependencies: boolean = true
+  private showToast(
+    severity: 'success' | 'info' | 'warn' | 'error',
+    summary: string,
+    detail: string
   ): void {
-    this.newSchedule = {
+    this.messageService.add({ severity, summary, detail, life: 5000 });
+  }
+
+  resetFormState(resetAll = true): void {
+    this.scheduleForm.reset({
       teacherId: null,
       subjectName: null,
+      educationalLevel: null,
+      subjectScope: null,
       day: null,
       startTime: null,
       className: null,
-    };
-
-    this.selectedEducationalLevel = null;
-    this.selectedSubjectScope = null;
-
+    });
+    this.availableSubjectsNames = [];
+    this.availableClassScopes = [];
     this.selectedTeacherFullData = undefined;
     this.selectedSubjectDetail = undefined;
-
-    if (resetDependencies) {
-      this.availableSubjectsNames = [];
-      this.availableClassScopes = [];
-    }
-
     if (resetAll) {
       this.isEditing = false;
       this.editingScheduleId = null;
@@ -217,248 +254,157 @@ export class ClassesComponent implements OnInit {
   setScheduleForEdit(schedule: ClassSchedule): void {
     this.isEditing = true;
     this.editingScheduleId = schedule.id;
-    this.resetFormState(false);
 
-    this.newSchedule.teacherId = Number(schedule.teacher_id);
+    const teacherId = Number(schedule.teacher_id);
+    this.applyTeacherContext(teacherId);
 
-    this.newSchedule.day = schedule.day;
+    const level =
+      Object.keys(this.AllClasses).find((lvl) =>
+        this.AllClasses[lvl].includes(schedule.class_level_scope ?? '')
+      ) ?? null;
+    const scopes = level ? this.AllClasses[level] : [];
+    this.availableClassScopes = scopes;
 
-    this.newSchedule.className = schedule.class_name || null;
-
+    let startDate: Date | null = null;
     if (schedule.start_time) {
-      const timeParts = (schedule.start_time as string).split(':');
-      const now = new Date();
-      now.setHours(
-        parseInt(timeParts[0], 10),
-        parseInt(timeParts[1], 10),
-        0,
-        0
-      );
-      this.newSchedule.startTime = now;
+      const [h, m] = String(schedule.start_time)
+        .split(':')
+        .map((n) => parseInt(n, 10));
+      const d = new Date();
+      d.setHours(h || 0, m || 0, 0, 0);
+      startDate = d;
     }
 
-    this.onTeacherChange({ value: this.newSchedule.teacherId });
-
-    setTimeout(() => {
-      this.newSchedule.subjectName = schedule.subject;
-
-      this.onSubjectChange({ value: schedule.subject });
-
-      let foundLevel = false;
-      let targetLevel: string | null = null;
-      for (const level in this.AllClasses) {
-        if (this.AllClasses[level].includes(schedule.class_level_scope!)) {
-          targetLevel = level;
-          foundLevel = true;
-          break;
-        }
-      }
-
-      if (foundLevel && targetLevel) {
-        this.selectedEducationalLevel = targetLevel;
-
-        this.onLevelChange({ value: targetLevel });
-
-        this.selectedSubjectScope = schedule.class_level_scope;
-      }
-    }, 150);
+    this.scheduleForm.patchValue(
+      {
+        teacherId,
+        subjectName: schedule.subject,
+        educationalLevel: level,
+        subjectScope: schedule.class_level_scope ?? null,
+        day: schedule.day,
+        startTime: startDate,
+        className: schedule.class_name || null,
+      },
+      { emitEvent: false }
+    );
   }
 
   cancelEdit(): void {
     this.resetFormState(true);
+    this.showToast('info', 'إلغاء', 'تم إلغاء التعديل.');
   }
-
-  private showToast(severity: string, summary: string, detail: string): void {
-    this.messageService.add({
-      severity: severity,
-      summary: summary,
-      detail: detail,
-      life: 5000,
-    });
-  }
-  updateSchedule(): void {
-    if (!this.editingScheduleId) return;
-
-    const scheduleToUpdate = this.buildSchedulePayload();
-
-    this.teacherService
-      .updateSchedule(this.editingScheduleId, scheduleToUpdate)
-      .subscribe({
-        next: (response) => {
-          if (response.error) {
-            console.error('خطأ Supabase في التعديل:', response.error);
-            this.showToast(
-              'error',
-              'فشل التعديل',
-              `خطأ: ${response.error.message}`
-            );
-          } else {
-            this.showToast('success', 'نجاح', ' تم تعديل الموعد بنجاح!');
-            this.loadCurrentSchedules();
-            this.resetFormState(true);
-          }
-        },
-        error: (err) => {
-          console.error('خطأ في الاتصال بالشبكة/الخدمة:', err);
-          this.showToast(
-            'error',
-            'خطأ في الاتصال',
-            'حدث خطأ أثناء محاولة الاتصال بالخادم لتعديل الموعد.'
-          );
-        },
-      });
-  }
-
-  private buildSchedulePayload(): any {
-    return {
-      teacher_id: this.newSchedule.teacherId,
-      subject: this.newSchedule.subjectName,
-      day: this.newSchedule.day,
-
-      start_time: this.newSchedule.startTime!.toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false,
-      }),
-
-      class_level_scope: this.selectedSubjectScope,
-
-      class_name: this.newSchedule.className ?? '',
-    };
-  }
-
-  deleteSchedule(scheduleId: number | null | undefined): void {
-    const idToDelete = Number(scheduleId);
-
-    if (scheduleId === null || scheduleId === undefined || isNaN(idToDelete)) {
-      console.error('ID الحصة غير صالح للحذف (تم منع الإرسال):', scheduleId);
-      this.showToast(
-        'warn',
-        'تحذير',
-        '⚠️ لا يمكن الحذف. معرف الحصة غير متوفر أو غير صالح.'
-      );
-      return;
-    }
-
-    this.confirmationService.confirm({
-      message:
-        'هل أنت متأكد من رغبتك في حذف هذا الموعد؟ لا يمكن التراجع عن هذا الإجراء.',
-      header: 'تأكيد الحذف',
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'نعم، احذف',
-      rejectLabel: 'إلغاء',
-      acceptButtonStyleClass: 'p-button-danger p-button-sm',
-      rejectButtonStyleClass: 'p-button-text p-button-sm',
-
-      accept: () => {
-        this.teacherService.deleteSchedule(idToDelete).subscribe({
-          next: (response) => {
-            if (response.error) {
-              console.error('خطأ Supabase في الحذف:', response.error);
-              this.showToast(
-                'error',
-                'فشل الحذف',
-                `خطأ: ${response.error.message}`
-              );
-            } else {
-              this.showToast('success', 'نجاح', '✅ تم حذف الموعد بنجاح!');
-              this.loadCurrentSchedules();
-
-              if (this.editingScheduleId === idToDelete) {
-                this.resetFormState(true);
-              }
-            }
-          },
-          error: (err) => {
-            console.error('خطأ في الاتصال بالشبكة/الخدمة:', err);
-            this.showToast(
-              'error',
-              'خطأ في الاتصال',
-              'حدث خطأ أثناء محاولة الاتصال بالخادم لحذف الموعد.'
-            );
-          },
-        });
-      },
-      reject: () => {
-        this.showToast('info', 'إلغاء', 'تم إلغاء عملية الحذف.');
-      },
-    });
-  }
-
-  // this.teacherService.deleteSchedule(idToDelete).subscribe({
-  //   next: (response) => {
-  //     if (response.error) {
-  //       console.error('خطأ Supabase في الحذف:', response.error);
-  //       this.showToast(
-  //         'error',
-  //         'فشل الحذف',
-  //         `خطأ: ${response.error.message}`
-  //       );
-  //     } else {
-  //       this.showToast('success', 'نجاح', ' تم حذف الموعد بنجاح!');
-  //       this.loadCurrentSchedules();
-
-  //       if (this.editingScheduleId === idToDelete) {
-  //         this.resetFormState(true);
-  //       }
-  //     }
-  //   },
-  //   error: (err) => {
-  //     console.error('خطأ في الاتصال بالشبكة/الخدمة:', err);
-  //     this.showToast(
-  //       'error',
-  //       'خطأ في الاتصال',
-  //       'حدث خطأ أثناء محاولة الاتصال بالخادم لحذف الموعد.'
-  //     );
-  //   },
-  // });
 
   saveSchedule(): void {
-    if (
-      !this.newSchedule.teacherId ||
-      !this.newSchedule.subjectName ||
-      !this.newSchedule.day ||
-      !this.newSchedule.startTime ||
-      !this.selectedSubjectScope
-    ) {
+    if (this.scheduleForm.invalid) {
+      this.scheduleForm.markAllAsTouched();
       this.showToast('warn', 'تحذير', 'الرجاء إكمال جميع الحقول المطلوبة.');
       return;
     }
 
     if (this.isEditing) {
       this.updateSchedule();
-    } else {
-      const scheduleToSend = this.buildSchedulePayload();
+      return;
+    }
 
-      this.teacherService.addSchedule(scheduleToSend).subscribe({
+    const payload = this.buildSchedulePayload();
+    this.teacherService.addSchedule(payload).subscribe({
+      next: (response) => {
+        if (response?.error) {
+          const err = response?.error;
+          this.showToast('error', 'فشل الإضافة', `خطأ: ${err.message}`);
+        } else {
+          this.showToast('success', 'نجاح', 'تمت إضافة الموعد الجديد بنجاح!');
+          this.refreshSchedules();
+          this.resetFormState(true);
+        }
+      },
+      error: (err) => {
+        this.showToast(
+          'error',
+          'خطأ في الاتصال',
+          'حدث خطأ أثناء الاتصال لإضافة الموعد.'
+        );
+      },
+    });
+  }
+
+  updateSchedule(): void {
+    if (!this.editingScheduleId) return;
+    const payload = this.buildSchedulePayload();
+
+    this.teacherService
+      .updateSchedule(this.editingScheduleId, payload)
+      .subscribe({
         next: (response) => {
-          if (response.error) {
-            console.error('خطأ Supabase في الإرسال:', response.error);
-            this.showToast(
-              'error',
-              'فشل الإضافة',
-              `خطأ: ${response.error.message}`
-            );
+          if (response?.error) {
+            const err = response?.error;
+            this.showToast('error', 'فشل التعديل', `خطأ: ${err.message}`);
           } else {
-            this.showToast(
-              'success',
-              'نجاح',
-              ' تمت إضافة الموعد الجديد بنجاح!'
-            );
-            this.loadCurrentSchedules();
+            this.showToast('success', 'نجاح', 'تم تعديل الموعد بنجاح!');
+            this.refreshSchedules();
             this.resetFormState(true);
           }
         },
         error: (err) => {
-          console.error('خطأ في الاتصال بالشبكة/الخدمة:', err);
           this.showToast(
             'error',
             'خطأ في الاتصال',
-            'حدث خطأ أثناء محاولة الاتصال بالخادم لإضافة الموعد.'
+            'حدث خطأ أثناء الاتصال لتعديل الموعد.'
           );
         },
       });
+  }
+
+  deleteSchedule(scheduleId: number | null | undefined): void {
+    const idToDelete = Number(scheduleId);
+    if (scheduleId == null || Number.isNaN(idToDelete)) {
+      this.showToast('warn', 'تحذير', '⚠️ لا يمكن الحذف. معرف الحصة غير صالح.');
+      return;
     }
+
+    this.confirmationService.confirm({
+      message: 'هل أنت متأكد من حذف هذا الموعد؟ لا يمكن التراجع.',
+      header: 'تأكيد الحذف',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'نعم، احذف',
+      rejectLabel: 'إلغاء',
+      acceptButtonStyleClass: 'p-button-danger p-button-sm',
+      rejectButtonStyleClass: 'p-button-text p-button-sm',
+      accept: () => {
+        this.teacherService.deleteSchedule(idToDelete).subscribe({
+          next: (response) => {
+            if (response?.error) {
+              const err = response?.error;
+              this.showToast('error', 'فشل الحذف', `خطأ: ${err.message}`);
+            } else {
+              this.showToast('success', 'نجاح', '✅ تم حذف الموعد بنجاح!');
+              this.refreshSchedules();
+              if (this.editingScheduleId === idToDelete)
+                this.resetFormState(true);
+            }
+          },
+          error: (err) => {
+            this.showToast(
+              'error',
+              'خطأ في الاتصال',
+              'حدث خطأ أثناء الاتصال لحذف الموعد.'
+            );
+          },
+        });
+      },
+      reject: () => this.showToast('info', 'إلغاء', 'تم إلغاء عملية الحذف.'),
+    });
+  }
+
+  get saveLabel(): string {
+    return this.isEditing ? 'حفظ التعديل' : 'إضافة جدول حصص';
+  }
+  get saveClass(): string {
+    return this.isEditing
+      ? 'p-button-lg p-button-warning'
+      : 'p-button-lg p-button-primary';
+  }
+  get disableSave(): boolean {
+    return this.scheduleForm.invalid;
   }
 }

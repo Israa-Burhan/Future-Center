@@ -7,7 +7,9 @@
     }
   }
   input {
-    height: 40px;
+    padding: 12px;
+    box-shadow: none;
+    border-radius: 12px;
   }
 }
 @mixin table_border() {
@@ -23,24 +25,35 @@
 }
 ::ng-deep {
   .p-card-body {
-    padding: 10px !important;
+    padding: 16px !important;
+  }
+  .p-card {
+    box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
   }
   .p-dropdown {
-    height: 40px;
+    padding: 12px;
     align-items: center;
-    span {
-      padding-right: 10px;
+    box-shadow: none;
+    border-radius: 12px;
+    .p-dropdown-trigger {
+      justify-content: flex-end;
     }
     .p-dropdown-clear-icon {
       left: 3rem;
       right: unset;
     }
-    .p-dropdown-panel .p-dropdown-items .p-dropdown-item {
+    .p-dropdown-panel .p-dropdown-items .p-dropdown-item,
+    .p-dropdown-empty-message {
       padding: 10px 5px;
     }
   }
   .p-calendar {
-    height: 40px;
+    input {
+      padding: 12px;
+      box-shadow: none;
+      border-radius: 12px;
+    }
   }
 
   .p-datatable-thead {
@@ -94,6 +107,10 @@
     border: 1px solid var(--primary-focus) !important;
   }
 
+  .p-datatable-header {
+    background: none !important;
+    border: none !important;
+  }
   .p-datatable-thead > tr > th {
     background-color: var(--primary-focus);
     color: var(--white) !important;
@@ -127,6 +144,16 @@
 
     thead tr {
       display: none;
+    }
+  }
+
+  p-button {
+    .p-button {
+      border-radius: 16px !important;
+      font-size: var(--font-size-medium) !important;
+      padding: 16px !important;
+      font-weight: var(--font-weight-medium) !important;
+      box-shadow: none !important;
     }
   }
 }
