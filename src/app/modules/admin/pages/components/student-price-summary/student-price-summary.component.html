@@ -1,0 +1,202 @@
+<div class="students">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="font-bold text-900">لوحة تحكم اشتركات الطلاب</h2>
+    </div>
+
+    <p-card>
+      <form [formGroup]="filterForm">
+        <div class="grid p-fluid mb-4">
+          <div class="field col-12 md:col-6 lg:col-4">
+            <label for="stage">المرحلة التعليمية</label>
+            <p-dropdown
+              id="stage"
+              formControlName="stage"
+              [options]="(stages$ | async) ?? []"
+              placeholder="اختر المرحلة"
+              optionLabel="label"
+              optionValue="value"
+              [showClear]="true"
+            ></p-dropdown>
+            <app-validation-message
+              [control]="f['stage']"
+            ></app-validation-message>
+          </div>
+
+          <div class="field col-12 md:col-6 lg:col-4">
+            <label for="yearLevel">الصف/المستوى</label>
+            <p-dropdown
+              id="yearLevel"
+              formControlName="yearLevel"
+              [options]="(yearLevels$ | async) ?? []"
+              placeholder="اختر الصف"
+              optionLabel="label"
+              optionValue="value"
+              [showClear]="true"
+              [disabled]="!f['stage'].value"
+              [emptyMessage]="'اختر المرحلة أولاً'"
+            ></p-dropdown>
+            <app-validation-message
+              [control]="f['yearLevel']"
+            ></app-validation-message>
+          </div>
+
+          <div class="field col-12 md:col-6 lg:col-4">
+            <label for="subjectId">المادة الدراسية</label>
+            <p-dropdown
+              id="subjectId"
+              formControlName="subjectId"
+              [options]="(subjects$ | async) ?? []"
+              placeholder="اختر المادة"
+              optionLabel="subject_name"
+              optionValue="subject_id"
+              [showClear]="true"
+              [disabled]="!f['yearLevel'].value"
+              [emptyMessage]="'اختر الصف أولاً'"
+            ></p-dropdown>
+            <app-validation-message
+              [control]="f['subjectId']"
+            ></app-validation-message>
+          </div>
+        </div>
+
+        <div class="col-12 mt-4 flex justify-content-start gap-3">
+          <p-button
+            label="بحث عن الطلاب"
+            icon="pi pi-search"
+            (onClick)="searchStudents()"
+            [loading]="isSearching"
+            [disabled]="
+              !f['stage'].value ||
+              !f['yearLevel'].value ||
+              !f['subjectId'].value ||
+              isSearching
+            "
+            styleClass="p-button-success"
+          ></p-button>
+          <p-button
+            label="مسح البحث"
+            icon="pi pi-times"
+            (onClick)="clearSearch()"
+            [disabled]="isSearching"
+            styleClass="p-button-secondary"
+          ></p-button>
+        </div>
+      </form>
+    </p-card>
+
+    <p-table
+      [value]="(filteredStudents$ | async) ?? []"
+      [paginator]="true"
+      [rows]="10"
+      [responsive]="true"
+      sortMode="multiple"
+      [sortOrder]="1"
+      styleClass="p-datatable-gridlines p-datatable-striped py-5"
+    >
+      <ng-template pTemplate="caption">
+        <h3 class="font-bold text-center text-xl">قائمة الطلاب الحاليين</h3>
+      </ng-template>
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th>اسم الطالب</th>
+          <th>المادة</th>
+          <th>السعر الأساسي</th>
+          <th>الخصم (%)</th>
+          <th>السعر النهائي</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-student>
+        <tr>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                اسم الطالب
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">{{ student.full_name }}</p>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                المادة
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">{{ student.subject_name }}</p>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                السعر الأساسي
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">
+                  {{
+                    student.base_price
+                      | currency : "EGP" : "symbol" : "1.0-2" : "ar"
+                  }}
+                </p>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                نسبة الخصم
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">{{ student.discount_percent }}%</p>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                السعر النهائي
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">
+                  {{
+                    student.final_price
+                      | currency : "EGP" : "symbol" : "1.0-2" : "ar"
+                  }}
+                </p>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="11" class="text-center p-4">لا يوجد بيانات متاحة</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

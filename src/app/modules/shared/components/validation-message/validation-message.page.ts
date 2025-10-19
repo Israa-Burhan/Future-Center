@@ -31,6 +31,12 @@ export class ValidationMessagePage {
         return `الحد الأقصى ${err?.requiredLength} أحرف`;
       case 'pattern':
         return 'القيمة لا تطابق النمط المطلوب';
+      case 'min':
+        return `الحد الأدنى ${err?.min} `;
+      case 'max':
+        return `الحد الأقصى ${err?.max} `;
+      case 'mustBeDifferent':
+        return `⚠️ يجب أن يكون رقم ولي الأمر مختلفًا عن رقم الطالب. `;
       default:
         return 'تحقق من الحقل';
     }

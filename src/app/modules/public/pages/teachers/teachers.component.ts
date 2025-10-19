@@ -13,7 +13,6 @@ import { TableModule } from 'primeng/table';
   selector: 'app-teachers',
   standalone: true,
   imports: [
-    RouterLink,
     CommonModule,
     CardModule,
     ButtonModule,

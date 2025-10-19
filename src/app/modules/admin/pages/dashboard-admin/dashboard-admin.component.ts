@@ -11,7 +11,8 @@ import { Router, ActivatedRoute, RouterModule, Route } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { AuthService } from '../../../auth/services/auth.service';
 import { supabase } from '../../../../core/services/supabase.client';
-
+import { ToastModule } from 'primeng/toast';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 type NavMeta = {
   label?: string;
   icon?: string;
@@ -28,7 +29,14 @@ type Role = 'admin' | 'staff';
 @Component({
   selector: 'app-dashboard-admin',
   standalone: true,
-  imports: [CommonModule, RouterModule, InputTextModule, ButtonModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    InputTextModule,
+    ButtonModule,
+    ToastModule,
+    ConfirmDialogModule,
+  ],
   templateUrl: './dashboard-admin.component.html',
   styleUrls: ['./dashboard-admin.component.scss'],
 })

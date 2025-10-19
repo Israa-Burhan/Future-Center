@@ -9,12 +9,8 @@ import { CalendarModule } from 'primeng/calendar';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { DividerModule } from 'primeng/divider';
-import { ToastModule } from 'primeng/toast';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ConfirmationService, MessageService, SelectItem } from 'primeng/api';
-
+import { ConfirmationService, SelectItem } from 'primeng/api';
 import { forkJoin } from 'rxjs';
-
 import { TeacherService } from '../../../../../core/services/teacher.service';
 import {
   Teacher,
@@ -23,6 +19,7 @@ import {
 } from '../../../../../core/models/teacher.model';
 import { ValidationMessagePage } from '../../../../shared/components/validation-message/validation-message.page';
 import { RxwebValidators } from '@rxweb/reactive-form-validators';
+import { NotificationService } from '../../../../../core/services/notification.service';
 
 type ScheduleDTO = {
   id: number | string;
@@ -47,18 +44,15 @@ type ScheduleDTO = {
     ButtonModule,
     TableModule,
     DividerModule,
-    ToastModule,
-    ConfirmDialogModule,
     ValidationMessagePage,
   ],
   templateUrl: './classes.component.html',
   styleUrl: './classes.component.scss',
-  providers: [MessageService, ConfirmationService],
 })
 export class ClassesComponent implements OnInit {
   private fb = inject(FormBuilder);
   private teacherService = inject(TeacherService);
-  private messageService = inject(MessageService);
+  private notificationService = inject(NotificationService);
   private confirmationService = inject(ConfirmationService);
 
   scheduleForm = this.fb.group({
@@ -84,15 +78,38 @@ export class ClassesComponent implements OnInit {
   editingScheduleId: number | null = null;
 
   daysOfWeek: string[] = [
+    'السبت',
     'الأحد',
     'الاثنين',
     'الثلاثاء',
     'الأربعاء',
     'الخميس',
     'الجمعة',
-    'السبت',
   ];
 
+  public customSort(event: any): void {
+    const data = this.currentSchedules;
+
+    if (!event.field || !data) {
+      return;
+    }
+
+    if (event.field === 'day') {
+      data.sort((a, b) => {
+        const indexA = this.daysOfWeek.indexOf(a.day);
+        const indexB = this.daysOfWeek.indexOf(b.day);
+
+        let comparison = 0;
+        if (indexA > indexB) {
+          comparison = 1;
+        } else if (indexA < indexB) {
+          comparison = -1;
+        }
+
+        return event.order * comparison;
+      });
+    }
+  }
   AllClasses: Record<string, string[]> = {
     ابتدائي: [
       'الصف الأول ابتدائي',
@@ -223,14 +240,6 @@ export class ClassesComponent implements OnInit {
     });
   }
 
-  private showToast(
-    severity: 'success' | 'info' | 'warn' | 'error',
-    summary: string,
-    detail: string
-  ): void {
-    this.messageService.add({ severity, summary, detail, life: 5000 });
-  }
-
   resetFormState(resetAll = true): void {
     this.scheduleForm.reset({
       teacherId: null,
@@ -291,13 +300,15 @@ export class ClassesComponent implements OnInit {
 
   cancelEdit(): void {
     this.resetFormState(true);
-    this.showToast('info', 'إلغاء', 'تم إلغاء التعديل.');
+    this.notificationService.showCancelSuccess('عملية التعديل');
   }
 
   saveSchedule(): void {
     if (this.scheduleForm.invalid) {
       this.scheduleForm.markAllAsTouched();
-      this.showToast('warn', 'تحذير', 'الرجاء إكمال جميع الحقول المطلوبة.');
+      this.notificationService.showWarning(
+        'الرجاء إكمال جميع الحقول المطلوبة.'
+      );
       return;
     }
 
@@ -311,18 +322,20 @@ export class ClassesComponent implements OnInit {
       next: (response) => {
         if (response?.error) {
           const err = response?.error;
-          this.showToast('error', 'فشل الإضافة', `خطأ: ${err.message}`);
+          this.notificationService.showError(
+            `خطأ: ${err.message}`,
+            'خطأ في الاتصال'
+          );
         } else {
-          this.showToast('success', 'نجاح', 'تمت إضافة الموعد الجديد بنجاح!');
+          this.notificationService.showAddSuccess('الموعد الجديد');
           this.refreshSchedules();
           this.resetFormState(true);
         }
       },
       error: (err) => {
-        this.showToast(
-          'error',
-          'خطأ في الاتصال',
-          'حدث خطأ أثناء الاتصال لإضافة الموعد.'
+        this.notificationService.showError(
+          'حدث خطأ أثناء الاتصال لإضافة الموعد.',
+          'خطأ في الاتصال'
         );
       },
     });
@@ -338,18 +351,20 @@ export class ClassesComponent implements OnInit {
         next: (response) => {
           if (response?.error) {
             const err = response?.error;
-            this.showToast('error', 'فشل التعديل', `خطأ: ${err.message}`);
+            this.notificationService.showError(
+              `خطأ: ${err.message}`,
+              'فشل التعديل'
+            );
           } else {
-            this.showToast('success', 'نجاح', 'تم تعديل الموعد بنجاح!');
+            this.notificationService.showUpdateSuccess('الموعد');
             this.refreshSchedules();
             this.resetFormState(true);
           }
         },
         error: (err) => {
-          this.showToast(
-            'error',
-            'خطأ في الاتصال',
-            'حدث خطأ أثناء الاتصال لتعديل الموعد.'
+          this.notificationService.showError(
+            'حدث خطأ أثناء الاتصال لتعديل الموعد.',
+            'خطأ في الاتصال'
           );
         },
       });
@@ -358,7 +373,9 @@ export class ClassesComponent implements OnInit {
   deleteSchedule(scheduleId: number | null | undefined): void {
     const idToDelete = Number(scheduleId);
     if (scheduleId == null || Number.isNaN(idToDelete)) {
-      this.showToast('warn', 'تحذير', '⚠️ لا يمكن الحذف. معرف الحصة غير صالح.');
+      this.notificationService.showWarning(
+        '⚠️ لا يمكن الحذف. معرف الحصة غير صالح.'
+      );
       return;
     }
 
@@ -375,24 +392,26 @@ export class ClassesComponent implements OnInit {
           next: (response) => {
             if (response?.error) {
               const err = response?.error;
-              this.showToast('error', 'فشل الحذف', `خطأ: ${err.message}`);
+              this.notificationService.showError(
+                `خطأ: ${err.message}`,
+                'فشل الحذف'
+              );
             } else {
-              this.showToast('success', 'نجاح', '✅ تم حذف الموعد بنجاح!');
+              this.notificationService.showDeleteSuccess('الموعد');
               this.refreshSchedules();
               if (this.editingScheduleId === idToDelete)
                 this.resetFormState(true);
             }
           },
           error: (err) => {
-            this.showToast(
-              'error',
-              'خطأ في الاتصال',
-              'حدث خطأ أثناء الاتصال لحذف الموعد.'
+            this.notificationService.showError(
+              'حدث خطأ أثناء الاتصال لحذف الموعد.',
+              'خطأ في الاتصال'
             );
           },
         });
       },
-      reject: () => this.showToast('info', 'إلغاء', 'تم إلغاء عملية الحذف.'),
+      reject: () => this.notificationService.showCancelSuccess('عملية الحذف'),
     });
   }
 

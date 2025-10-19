@@ -52,6 +52,11 @@
 
     <!-- Content -->
     <div class="content flex-1 py-4">
+      <p-toast></p-toast>
+      <p-confirmDialog
+        [style]="{ width: '50vw' }"
+        [baseZIndex]="1000"
+      ></p-confirmDialog>
       <router-outlet></router-outlet>
     </div>
   </div>

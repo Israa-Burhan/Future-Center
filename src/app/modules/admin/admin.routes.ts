@@ -122,15 +122,37 @@ export const adminRoutes: Routes = [
           nav: { label: 'الرسائل', icon: 'pi pi-envelope', order: 10 },
         },
       },
+      // {
+      //   path: 'settings',
+      //   loadComponent: () =>
+      //     import('./pages/components/setting/setting.component').then(
+      //       (m) => m.SettingComponent
+      //     ),
+      //   data: {
+      //     roles: ['admin'],
+      //     nav: { label: 'الإعدادات', icon: 'pi pi-cog', order: 11 },
+      //   },
+      // },
       {
-        path: 'settings',
+        path: 'subjects',
         loadComponent: () =>
-          import('./pages/components/setting/setting.component').then(
-            (m) => m.SettingComponent
+          import('./pages/components/subjects/subjects.component').then(
+            (m) => m.SubjectsComponent
           ),
         data: {
-          roles: ['admin'],
-          nav: { label: 'الإعدادات', icon: 'pi pi-cog', order: 11 },
+          roles: ['admin', 'staff'],
+          nav: { label: 'إضافة مادة', icon: 'pi pi-book', order: 12 },
+        },
+      },
+      {
+        path: 'student-price-summary',
+        loadComponent: () =>
+          import(
+            './pages/components/student-price-summary/student-price-summary.component'
+          ).then((m) => m.StudentPriceSummaryComponent),
+        data: {
+          roles: ['admin', 'staff'],
+          nav: { label: 'اسعار الدورات للطلاب', icon: 'pi pi-book', order: 13 },
         },
       },
     ],

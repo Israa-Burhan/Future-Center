@@ -1,1 +1,430 @@
-<p>students works!</p>
+<div class="students">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="font-bold text-900">لوحة تحكم إدارة بيانات الطلاب</h2>
+    </div>
+
+    <p-card [header]="isEditing ? ' تعديل معلومات الطالب' : 'إضافة طالب جديد'">
+      <form [formGroup]="studentForm" (ngSubmit)="saveStudent()">
+        <div class="grid p-fluid mb-4">
+          <div class="field col-12 md:col-6 lg:col-4">
+            <label for="fullName"
+              >الاسم الكامل للطالب <span class="text-red-500">*</span></label
+            >
+            <input pInputText id="fullName" formControlName="full_name" />
+            <app-validation-message
+              [control]="studentForm.get('full_name')"
+            ></app-validation-message>
+          </div>
+
+          <div class="field col-12 md:col-6 lg:col-4">
+            <label for="phone"
+              >رقم هاتف الطالب <span class="text-red-500">*</span></label
+            >
+            <input pInputText id="phone" formControlName="phone" />
+            <app-validation-message
+              [control]="studentForm.get('phone')"
+            ></app-validation-message>
+          </div>
+
+          <div class="field col-12 md:col-6 lg:col-4">
+            <label for="guardianPhone"
+              >رقم هاتف ولي الأمر <span class="text-red-500">*</span></label
+            >
+            <input
+              pInputText
+              id="guardianPhone"
+              formControlName="guardian_phone"
+            />
+            <app-validation-message
+              [control]="studentForm.get('guardian_phone')"
+            ></app-validation-message>
+          </div>
+
+          <div class="field col-12 md:col-6 lg:col-4">
+            <label for="grade"
+              >المرحلة التعليمية <span class="text-red-500">*</span></label
+            >
+            <p-dropdown
+              id="grade"
+              formControlName="grade"
+              [options]="(stages$ | async) ?? []"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="اختر المرحلة"
+              [showClear]="true"
+            ></p-dropdown>
+            <app-validation-message
+              [control]="studentForm.get('grade')"
+            ></app-validation-message>
+          </div>
+
+          <div class="field col-12 md:col-6 lg:col-4">
+            <label for="yearLevel"
+              >الصف الدراسي <span class="text-red-500">*</span></label
+            >
+            <p-dropdown
+              id="yearLevel"
+              formControlName="year_level"
+              [options]="(yearLevels$ | async) ?? []"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="اختر الصف"
+              [showClear]="true"
+              [emptyMessage]="'لا توجد صفوف'"
+            ></p-dropdown>
+            <app-validation-message
+              [control]="studentForm.get('year_level')"
+            ></app-validation-message>
+          </div>
+
+          <div class="field col-12 md:col-6 lg:col-4">
+            <label for="subjects"
+              >المواد المشترك بها <span class="text-red-500">*</span></label
+            >
+            <p-multiSelect
+              id="subjects"
+              formControlName="subscribed_subjects"
+              [options]="(availableSubjects$ | async) ?? []"
+              optionLabel="subject_name"
+              optionValue="subject_id"
+              placeholder="اختر المواد (اختيار متعدد)"
+              display="chip"
+              [showClear]="true"
+              [emptyMessage]="'لا توجد مواد'"
+              [emptyFilterMessage]="'لا يوجد نتائج بحث مطابقة'"
+            ></p-multiSelect>
+            <app-validation-message
+              [control]="studentForm.get('subscribed_subjects')"
+            ></app-validation-message>
+          </div>
+
+          <div class="field col-12 md:col-6 lg:col-4">
+            <label for="feePlan"
+              >تصنيف خطة الرسوم <span class="text-red-500">*</span></label
+            >
+            <p-dropdown
+              id="feePlan"
+              formControlName="fee_plan"
+              [options]="feePlans"
+              optionLabel="name"
+              placeholder="اختر تصنيف الرسوم"
+            >
+            </p-dropdown>
+
+            <app-validation-message
+              [control]="studentForm.get('fee_plan')"
+            ></app-validation-message>
+          </div>
+
+          <div class="field col-12 md:col-6 lg:col-4">
+            <label for="discount"
+              >نسبة الخصم (%) <span class="text-red-500">*</span></label
+            >
+            <p-inputNumber
+              id="discount"
+              formControlName="discount_percent"
+              [showButtons]="false"
+              [min]="0"
+              [max]="100"
+              suffix="%"
+              [disabled]="!isDiscountManual"
+            >
+            </p-inputNumber>
+            <app-validation-message
+              [control]="studentForm.get('discount_percent')"
+            ></app-validation-message>
+          </div>
+          <div class="field col-12 md:col-6 lg:col-4">
+            <label for="schoolName">
+              اسم المدرسة <span class="text-red-500">*</span></label
+            >
+            <input pInputText id="schoolName" formControlName="school_name" />
+            <app-validation-message
+              [control]="studentForm.get('school_name')"
+            ></app-validation-message>
+          </div>
+
+          <div class="field col-12 md:col-6 lg:col-4">
+            <label for="academicYear"
+              >العام الدراسي <span class="text-red-500">*</span></label
+            >
+            <p-dropdown
+              id="academicYear"
+              formControlName="academic_year"
+              [options]="academicYears"
+              placeholder="اختر العام الدراسي"
+            ></p-dropdown>
+            <app-validation-message
+              [control]="studentForm.get('academic_year')"
+            ></app-validation-message>
+          </div>
+          <div class="field col-12 md:col-6 lg:col-5 flex flex-column gap-1">
+            <label for="notes text-start">ملاحظات إضافية (اختياري)</label>
+            <textarea
+              pInputTextarea
+              id="notes"
+              formControlName="notes"
+              rows="1"
+              placeholder="ملاحظات حول الطالب أو التسجيل..."
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="col-12 mt-4 flex justify-content-start gap-3">
+          <p-button
+            type="submit"
+            [label]="saveLabel"
+            icon="pi pi-check"
+            [styleClass]="saveClass"
+            [disabled]="disableSave"
+          ></p-button>
+
+          <p-button
+            *ngIf="isEditing"
+            type="button"
+            label="إلغاء التعديل"
+            icon="pi pi-times"
+            styleClass="p-button-secondary p-button-outlined"
+            (onClick)="cancelEdit()"
+          ></p-button>
+        </div>
+      </form>
+    </p-card>
+
+    <p-table
+      [value]="(students$ | async) ?? []"
+      [paginator]="true"
+      [rows]="10"
+      sortMode="multiple"
+      sortField="full_name"
+      [sortOrder]="1"
+      styleClass="p-datatable-gridlines p-datatable-striped py-5"
+    >
+      <ng-template pTemplate="caption">
+        <h3 class="font-bold text-center text-xl">قائمة الطلاب الحاليين</h3>
+      </ng-template>
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th class="text-center">اسم الطالب</th>
+          <th class="text-center">رقم هاتف الطالب</th>
+          <th class="text-center">رقم هاتف ولي الأمر</th>
+          <th class="text-center">المرحلة</th>
+          <th class="text-center" pSortableColumn="year_level">
+            الصف <p-sortIcon field="year_level" />
+          </th>
+          <th class="text-center">المواد المشترك بها</th>
+          <th class="text-center">خطة الرسوم</th>
+          <th class="text-center" pSortableColumn="discount_percent">
+            نسبة الخصم <p-sortIcon field="discount_percent" />
+          </th>
+          <th class="text-center">اسم المدرسة</th>
+          <th class="text-center">العام الدراسي</th>
+          <th class="text-center">الملاحظات</th>
+          <th class="text-center">الإجراءات</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-student>
+        <tr>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                اسم الطالب
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">{{ student.full_name }}</p>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                رقم هاتف الطالب
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">{{ student.phone }}</p>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                رقم هاتف ولي الأمر
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">{{ student.guardian_phone }}</p>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                المرحلة
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">{{ student.grade }}</p>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">الصف</p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">{{ student.year_level }}</p>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                المواد المشترك بها
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <div class="row_data mb-0">
+                  <!-- <span *ngIf="student.subscribed_subject_names?.length">
+                    {{ student.subscribed_subject_names.join(" | ") }}
+                  </span> -->
+                  <ul
+                    *ngIf="student.subscribed_subject_names?.length"
+                    class="p-0 m-0 text-right"
+                    style="padding-right: 1.5rem; list-style-type: number"
+                  >
+                    <li
+                      *ngFor="
+                        let subjectName of student.subscribed_subject_names
+                      "
+                      class="p-0 m-0 text-sm"
+                    >
+                      {{ subjectName }}
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                خطة الرسوم
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">{{ student.fee_plan }}</p>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                نسبة الخصم
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">{{ student.discount_percent }}</p>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                اسم المدرسة
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">{{ student.school_name }}</p>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                السنة الدراسية
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">{{ student.academic_year }}</p>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                الملاحظات
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">{{ student.notes || "-" }}</p>
+              </div>
+            </div>
+          </td>
+
+          <td class="text-center">
+            <div class="flex justify-content-center gap-2">
+              <p-button
+                icon="pi pi-pencil "
+                styleClass="p-button-sm p-button-info p-button-text"
+                label="تعديل"
+                (click)="editStudent(student)"
+              ></p-button>
+              <p-button
+                icon="pi pi-trash"
+                styleClass="p-button-sm p-button-danger p-button-text"
+                label="حذف"
+                (click)="deleteStudent(student)"
+              ></p-button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="11" class="text-center p-4">
+            لا توجد بيانات طلاب مسجلة حاليًا.
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

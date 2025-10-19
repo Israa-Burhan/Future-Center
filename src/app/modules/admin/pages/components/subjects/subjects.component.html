@@ -1,0 +1,225 @@
+<div class="subjects">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="font-bold text-900">لوحة تحكم إضافة أسعار المواد الدراسية</h2>
+    </div>
+
+    <p-card
+      [header]="isEditing ? ' تعديل  المادة الحالية' : 'إضافة مادة جديدة'"
+    >
+      <form
+        [formGroup]="subjectForm"
+        (ngSubmit)="saveSubject()"
+        class="p-fluid grid formgrid"
+      >
+        <div class="field col-12 md:col-6">
+          <label for="stage">
+            المرحلة التعليمية <span class="text-red-500">*</span></label
+          >
+          <p-dropdown
+            id="stage"
+            [options]="stages"
+            formControlName="educational_stage"
+            placeholder="اختر مرحلة"
+            [showClear]="true"
+          ></p-dropdown>
+          <app-validation-message
+            [control]="subjectForm.get('educational_stage')"
+          ></app-validation-message>
+        </div>
+
+        <div class="field col-12 md:col-6">
+          <label for="subjectName">
+            اسم المادة <span class="text-red-500">*</span>
+          </label>
+          <p-dropdown
+            id="subjectName"
+            [options]="availableSubjectNames"
+            formControlName="subject_name"
+            placeholder="اختر المادة بعد تحديد المرحلة"
+            [emptyMessage]="'لا توجد مواد'"
+            [showClear]="true"
+          ></p-dropdown>
+          <app-validation-message
+            [control]="subjectForm.get('subject_name')"
+          ></app-validation-message>
+        </div>
+
+        <div class="field col-12 md:col-6">
+          <label for="yearCode">
+            الصف الدراسي<span class="text-red-500">*</span>
+          </label>
+          <p-dropdown
+            id="yearCode"
+            [options]="availableYearLevels"
+            formControlName="year_level_code"
+            placeholder="اختر الصف"
+            [showClear]="true"
+            [emptyMessage]="'لا توجد صفوف'"
+          ></p-dropdown>
+          <app-validation-message
+            [control]="subjectForm.get('year_level_code')"
+          ></app-validation-message>
+        </div>
+
+        <div class="field col-12 md:col-6">
+          <label for="price"
+            >السعر الأساسي (ج.م) <span class="text-red-500">*</span></label
+          >
+          <p-inputNumber
+            id="price"
+            formControlName="base_price"
+            mode="currency"
+            currency="EGP"
+            locale="en-EG"
+            class="w-full"
+          ></p-inputNumber>
+          <app-validation-message
+            [control]="subjectForm.get('base_price')"
+          ></app-validation-message>
+        </div>
+
+        <div class="col-12 mt-4 flex justify-content-start gap-3">
+          <p-button
+            type="submit"
+            [label]="saveLabel"
+            icon="pi pi-check"
+            [styleClass]="saveClass"
+            [disabled]="disableSave"
+          ></p-button>
+
+          <p-button
+            *ngIf="isEditing"
+            type="button"
+            label="إلغاء التعديل"
+            icon="pi pi-times"
+            styleClass="p-button-secondary p-button-outlined"
+            (onClick)="cancelEdit()"
+          ></p-button>
+        </div>
+      </form>
+    </p-card>
+
+    <p-table
+      [value]="(subjects$ | async) ?? []"
+      [paginator]="true"
+      [rows]="10"
+      sortMode="multiple"
+      sortField="base_price"
+      [sortOrder]="-1"
+      styleClass="p-datatable-gridlines p-datatable-striped py-5"
+    >
+      <ng-template pTemplate="caption">
+        <h3 class="font-bold text-center text-xl">قائمة المواد الحالية</h3>
+      </ng-template>
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th class="text-center">اسم المادة</th>
+
+          <th class="text-center">المرحلة</th>
+
+          <th class="text-center" pSortableColumn="year_level_code">
+            الصف <p-sortIcon field="year_level_code" />
+          </th>
+
+          <th class="text-center" pSortableColumn="base_price">
+            السعر <p-sortIcon field="base_price" />
+          </th>
+
+          <th class="text-center">الإجراءات</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-subject>
+        <tr>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                اسم المادة
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">
+                  {{ subject.subject_name }}
+                </p>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                المرحلة
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">
+                  {{ subject.educational_stage }}
+                </p>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">الصف</p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">
+                  {{ subject.year_level_code }}
+                </p>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                السعر الأساسي
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">
+                  {{ subject.base_price | currency : "EGP" }}
+                </p>
+              </div>
+            </div>
+          </td>
+
+          <td>
+            <div class="flex justify-content-center gap-2">
+              <p-button
+                icon="pi pi-pencil "
+                styleClass="p-button-sm p-button-info p-button-text"
+                label="تعديل"
+                (click)="editSubject(subject)"
+              ></p-button>
+              <p-button
+                icon="pi pi-trash"
+                styleClass="p-button-sm p-button-danger p-button-text"
+                label="حذف"
+                (click)="deleteSubject(subject.subject_id)"
+              ></p-button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="7" class="text-center p-4">
+            لا توجد مواد مسجلة حاليًا.
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

@@ -80,7 +80,7 @@
     z-index: 1000;
 
     ul {
-      margin-top: 20px;
+      margin-top: 2px;
 
       li {
         margin: 6px 8px;
@@ -91,7 +91,7 @@
           align-items: center;
           gap: 10px;
           font-size: 18px;
-          padding: 10px 14px;
+          padding: 8px 14px;
           text-decoration: none;
           color: var(--white);
           border-radius: 8px;
@@ -150,6 +150,16 @@
 
     &.collapsed.expanded {
       width: 220px;
+    }
+  }
+}
+
+::ng-deep {
+  .p-toast {
+    position: fixed;
+    width: 25rem;
+    @include responsive(sm) {
+      width: 20rem;
     }
   }
 }

@@ -1,23 +1,9 @@
 @import "../../../../../../assets/styles/scss/mixins";
-.students {
+.subjects {
   h2 {
     font-size: var(--h2);
     @include responsive(sm) {
       font-size: var(--h4);
-    }
-  }
-  input,
-  textarea {
-    padding: 12px;
-    align-items: center;
-    box-shadow: none;
-    border-radius: 12px;
-  }
-  textarea {
-    border: 1px solid var(--border-gray);
-    &:focus {
-      border-color: var(--primary-focus);
-      outline: none;
     }
   }
 }

@@ -156,4 +156,11 @@
       box-shadow: none !important;
     }
   }
+  .p-datatable .p-sortable-column.p-highlight .p-sortable-column-icon {
+    color: var(--white) !important;
+  }
+  .p-datatable .p-sortable-column .p-sortable-column-icon {
+    color: var(--white);
+    margin-right: 0.5rem;
+  }
 }
