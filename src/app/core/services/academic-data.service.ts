@@ -1,15 +1,12 @@
-// src/app/services/academic-data.service.ts (ملف جديد/معدل)
-
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { SelectItem } from 'primeng/api'; // استيراد SelectItem
+import { SelectItem } from 'primeng/api';
 
 interface Stage {
   label: string;
   value: string;
 }
 
-// 💡 البيانات الثابتة (تم نقلها من SubjectsComponent)
 const STAGE_SUBJECT_MAP: { [key: string]: string[] } = {
   ابتدائي: [
     'اللغة العربية',
@@ -63,14 +60,12 @@ const ALL_YEAR_LEVELS_DATA: { label: string; value: number; stage: string }[] =
   providedIn: 'root',
 })
 export class AcademicDataService {
-  // 1. المراحل التعليمية ( Stages )
   public stages$: Observable<Stage[]> = of([
     { label: 'ابتدائي', value: 'ابتدائي' },
     { label: 'إعدادي', value: 'إعدادي' },
     { label: 'ثانوي', value: 'ثانوي' },
   ]);
 
-  // 2. تصفية أسماء المواد ( Subject Names )
   getSubjectNames(stage: string | null): Observable<string[]> {
     if (!stage || !STAGE_SUBJECT_MAP[stage]) {
       return of([]);
@@ -78,7 +73,6 @@ export class AcademicDataService {
     return of(STAGE_SUBJECT_MAP[stage]);
   }
 
-  // 3. تصفية الصفوف الدراسية ( Year Levels )
   getYearLevels(stage: string | null): Observable<SelectItem[]> {
     if (!stage) {
       return of([]);
@@ -97,7 +91,6 @@ export class AcademicDataService {
     return of(filteredLevels);
   }
 
-  // 💡 يمكنك إضافة دوال للوصول إلى البيانات الأصلية إذا لزم الأمر
   getAllStages(): Observable<string[]> {
     return of(Object.keys(STAGE_SUBJECT_MAP));
   }
