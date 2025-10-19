@@ -235,7 +235,6 @@ export class StudentsComponent implements OnInit {
         phone: [
           '',
           [
-            RxwebValidators.required({ message: 'رقم الهاتف مطلوب' }),
             RxwebValidators.pattern({
               expression: { phone: /^0\d{9,11}$/ },
               message: 'رقم الهاتف يجب ان يبدأب ب 0 و يحتوي على 10 ارقام',
@@ -246,7 +245,6 @@ export class StudentsComponent implements OnInit {
         guardian_phone: [
           '',
           [
-            RxwebValidators.required({ message: 'رقم الهاتف مطلوب' }),
             RxwebValidators.pattern({
               expression: { phone: /^0\d{9,10}$/ },
               message: 'رقم الهاتف يجب ان يبدأب ب 0 و يحتوي على 10 ارقام',

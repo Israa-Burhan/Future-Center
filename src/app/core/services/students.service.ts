@@ -14,8 +14,8 @@ export interface Subject {
 export interface Student {
   id: string;
   full_name: string;
-  phone: string;
-  guardian_phone: string;
+  phone: string | null;
+  guardian_phone: string | null;
   year_level: number;
   grade: string | null;
   status: 'فعّال' | 'مجمد' | 'منسحب';
@@ -31,6 +31,8 @@ export interface Student {
 }
 
 export type StudentInsert = Omit<Student, 'id' | 'created_at' | 'status'> & {
+  phone?: string | null;
+  guardian_phone?: string | null;
   notes?: string | null;
 };
 export interface FilteredStudentResult {
@@ -105,6 +107,8 @@ export class StudentService {
   addStudent(studentData: StudentInsert): Observable<Student> {
     const dataToInsert: Partial<StudentInsert> = {
       ...studentData,
+      phone: studentData.phone || null,
+      guardian_phone: studentData.guardian_phone || null,
       grade: studentData.grade || null,
       school_name: studentData.school_name || null,
       fee_plan: studentData.fee_plan || null,

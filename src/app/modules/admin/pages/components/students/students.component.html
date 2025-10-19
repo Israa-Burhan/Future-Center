@@ -18,9 +18,7 @@
           </div>
 
           <div class="field col-12 md:col-6 lg:col-4">
-            <label for="phone"
-              >رقم هاتف الطالب <span class="text-red-500">*</span></label
-            >
+            <label for="phone">رقم هاتف الطالب </label>
             <input pInputText id="phone" formControlName="phone" />
             <app-validation-message
               [control]="studentForm.get('phone')"
@@ -28,9 +26,7 @@
           </div>
 
           <div class="field col-12 md:col-6 lg:col-4">
-            <label for="guardianPhone"
-              >رقم هاتف ولي الأمر <span class="text-red-500">*</span></label
-            >
+            <label for="guardianPhone">رقم هاتف ولي الأمر </label>
             <input
               pInputText
               id="guardianPhone"
@@ -252,7 +248,7 @@
               <div
                 class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
               >
-                <p class="row_data mb-0">{{ student.phone }}</p>
+                <p class="row_data mb-0">{{ student.phone || "-" }}</p>
               </div>
             </div>
           </td>
@@ -266,7 +262,7 @@
               <div
                 class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
               >
-                <p class="row_data mb-0">{{ student.guardian_phone }}</p>
+                <p class="row_data mb-0">{{ student.guardian_phone || "-" }}</p>
               </div>
             </div>
           </td>
