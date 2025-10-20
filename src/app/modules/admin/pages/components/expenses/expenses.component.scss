@@ -1,0 +1,125 @@
+@import "../../../../../../assets/styles/helpers/table";
+.expenses {
+  .topbar {
+    text-align: center;
+    margin-bottom: 2rem;
+    h2 {
+      font-size: var(--h2);
+      font-weight: var(--font-weight-semibold);
+    }
+    p {
+      font-size: var(--font-size-medium);
+      font-weight: var(--font-weight-regular);
+    }
+    .pill {
+      font-size: var(--font-size-small);
+      font-weight: var(--font-weight-semibold);
+      padding: 16px;
+      border-radius: 12px;
+      background-color: #fff;
+      box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.1);
+    }
+  }
+  ::ng-deep {
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      background: #f9fafb;
+      padding: 1rem;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+      border: 1px solid #e5e7eb;
+      .search-field {
+        input {
+          width: 100%;
+          border-radius: 10px;
+          padding: 16px;
+          box-shadow: none;
+        }
+      }
+      .date-field {
+        .p-calendar {
+          width: 100%;
+          input {
+            width: 100%;
+            border-radius: 10px;
+            padding: 16px;
+            box-shadow: none;
+          }
+        }
+      }
+
+      .actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        button {
+          border-radius: 8px;
+          font-weight: 600;
+          padding: 16px;
+          box-shadow: none;
+        }
+      }
+    }
+    .p-dropdown {
+      padding: 12px;
+      align-items: center;
+      box-shadow: none;
+      border-radius: 12px;
+      .p-dropdown-trigger {
+        justify-content: flex-end;
+      }
+      .p-dropdown-clear-icon {
+        left: 3rem;
+        right: unset;
+      }
+      .p-dropdown-panel .p-dropdown-items .p-dropdown-item,
+      .p-dropdown-empty-message {
+        padding: 10px 5px;
+      }
+    }
+    .p-calendar {
+      width: 100%;
+      input {
+        width: 100%;
+        border-radius: 10px;
+        padding: 16px;
+        box-shadow: none;
+      }
+    }
+    input {
+      padding: 12px;
+      box-shadow: none;
+      border-radius: 12px;
+    }
+    textarea {
+      border: 1px solid var(--border-gray);
+      resize: none;
+      min-height: 120px;
+      padding: 12px;
+      align-items: center;
+      box-shadow: none;
+      border-radius: 12px;
+      &:focus {
+        border-color: var(--primary-focus);
+        outline: none;
+      }
+    }
+    .dialog-actions {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: flex-start;
+      align-items: center;
+      flex-direction: row;
+      flex-wrap: wrap;
+      button {
+        border-radius: 8px;
+        font-weight: 600;
+        padding: 16px;
+        box-shadow: none;
+        width: fit-content;
+      }
+    }
+  }
+}

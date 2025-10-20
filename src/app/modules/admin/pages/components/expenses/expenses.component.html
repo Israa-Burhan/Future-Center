@@ -1,1 +1,271 @@
-<p>expenses works!</p>
+<section class="expenses py-4">
+  <div class="container">
+    <!-- Topbar -->
+    <div class="topbar grid align-items-center">
+      <div class="col-12">
+        <h2>المصروفات</h2>
+        <p>إدارة مصروفات السنتر</p>
+      </div>
+      <div class="col-12">
+        <div class="pill flex flex-column gap-2">
+          إجمالي هذا الشهر
+          <strong>{{ monthTotal() | number : "1.2-2" }} ج.م</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters">
+      <span class="search-field col-12 md:col-6 lg:col-4">
+        <input
+          pInputText
+          type="text"
+          placeholder="ابحث بالنوع أو الوصف..."
+          (input)="onSearchInput($event)"
+          (keydown.enter)="onSearch()"
+        />
+      </span>
+
+      <span class="date-field col-12 md:col-6 lg:col-4">
+        <p-calendar
+          selectionMode="range"
+          placeholder="مدى التاريخ"
+          [appendTo]="'body'"
+          [ngModel]="dateRange()"
+          (onSelect)="onDateSelect($event)"
+          (onClearClick)="onDateClear()"
+        ></p-calendar>
+      </span>
+
+      <div class="actions col-12">
+        <button
+          pButton
+          label="تطبيق الفلاتر"
+          icon="pi pi-filter"
+          (click)="onSearch()"
+          class="p-button-primary"
+        ></button>
+        <button
+          pButton
+          label="مسح الفلاتر"
+          icon="pi pi-times"
+          (click)="onClearFilters()"
+          class="p-button-secondary"
+        ></button>
+      </div>
+    </div>
+    <div>
+      <button
+        pButton
+        icon="pi pi-plus"
+        label="مصروف جديد"
+        (click)="newExpense()"
+      ></button>
+    </div>
+    <p-table
+      [value]="data"
+      [lazy]="true"
+      (onLazyLoad)="onLazy($event)"
+      [paginator]="true"
+      [rows]="rows"
+      [totalRecords]="totalRecords"
+      [loading]="loading"
+      sortMode="single"
+      [sortField]="sortField"
+      [sortOrder]="sortOrder"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th class="text-center" pSortableColumn="spent_at">
+            التاريخ <p-sortIcon field="spent_at"></p-sortIcon>
+          </th>
+          <th class="text-center" pSortableColumn="kind">
+            النوع <p-sortIcon field="kind"></p-sortIcon>
+          </th>
+          <th class="text-center" pSortableColumn="amount">
+            المبلغ (ج.م) <p-sortIcon field="amount"></p-sortIcon>
+          </th>
+          <th class="text-center">الوصف</th>
+          <th class="text-center">إجراء</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-expense>
+        <tr>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                التاريخ
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">
+                  {{ fmtDate(expense.spent_at) }}
+                </p>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">النوع</p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">
+                  {{ getKindLabel(expense.kind) }}
+                </p>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                المبلغ
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">
+                  {{ expense.amount | number : "1.2-2" }}
+                </p>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">الوصف</p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">
+                  {{ expense.description || "-" }}
+                </p>
+              </div>
+            </div>
+          </td>
+
+          <td class="actions flex justify-content-center gap-2">
+            <button
+              pButton
+              icon="pi pi-pencil"
+              class="p-button-text"
+              (click)="editExpense(expense)"
+              title="تعديل"
+            ></button>
+            <button
+              pButton
+              icon="pi pi-trash"
+              class="p-button-text p-button-danger"
+              (click)="deleteExpense(expense)"
+              title="حذف"
+            ></button>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="5" class="empty">لا توجد مصروفات.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <!-- Editor Dialog -->
+  <p-dialog
+    [(visible)]="showEditor"
+    [modal]="true"
+    header="{{ editingId ? 'تعديل مصروف' : 'مصروف جديد' }}"
+    [style]="{ width: '38vw' }"
+    [breakpoints]="{ '960px': '60vw', '640px': '90vw' }"
+    [draggable]="false"
+    [resizable]="false"
+  >
+    <form [formGroup]="formExpense" class="p-fluid form-grid">
+      <div class="grid">
+        <div class="col-12 md:col-6 flex flex-column gap-2">
+          <label for="kinds">النوع <span class="req">*</span></label>
+          <p-dropdown
+            [options]="kinds"
+            formControlName="kind"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="اختر نوع المصروف"
+          ></p-dropdown>
+          <app-validation-message
+            [control]="formExpense.get('kind')"
+          ></app-validation-message>
+        </div>
+
+        <div class="col-12 md:col-6 flex flex-column gap-2">
+          <label for="amount">المبلغ (ج.م) <span class="req">*</span></label>
+          <p-inputNumber
+            formControlName="amount"
+            [min]="0"
+            [mode]="'decimal'"
+            [maxFractionDigits]="2"
+            inputId="amount"
+            placeholder="المبلغ (ج.م)"
+          ></p-inputNumber>
+          <app-validation-message
+            [control]="formExpense.get('amount')"
+          ></app-validation-message>
+        </div>
+
+        <div class="col-12 md:col-6 flex flex-column gap-2">
+          <label for="spent_at">التاريخ <span class="req">*</span></label>
+          <p-calendar
+            formControlName="spent_at"
+            dateFormat="yy-mm-dd"
+            appendTo="body"
+            inputId="spent_at"
+          ></p-calendar>
+          <app-validation-message
+            [control]="formExpense.get('spent_at')"
+          ></app-validation-message>
+        </div>
+
+        <div class="col-12 flex flex-column gap-2">
+          <label for="description">الوصف</label>
+          <textarea
+            pInputTextarea
+            rows="3"
+            formControlName="description"
+            placeholder="وصف مختصر (اختياري)"
+            id="description"
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="dialog-actions">
+        <button
+          pButton
+          type="button"
+          label="حفظ"
+          icon="pi pi-check"
+          (click)="saveExpense()"
+          [disabled]="formExpense.invalid"
+        ></button>
+        <button
+          pButton
+          type="button"
+          label="إلغاء"
+          class="p-button-secondary"
+          (click)="showEditor = false"
+        ></button>
+      </div>
+    </form>
+  </p-dialog>
+
+  <p-toast></p-toast>
+  <p-confirmDialog></p-confirmDialog>
+</section>

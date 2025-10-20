@@ -233,3 +233,15 @@
 // .scrollable {
 //   @include custom-scrollbar;
 // }
+
+@mixin table_border() {
+  &:first-of-type {
+    border-start-start-radius: 16px;
+    border-end-start-radius: 16px;
+  }
+
+  &:last-of-type {
+    border-start-end-radius: 16px;
+    border-end-end-radius: 16px;
+  }
+}

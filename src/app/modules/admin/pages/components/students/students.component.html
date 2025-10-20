@@ -6,38 +6,64 @@
 
     <p-card [header]="isEditing ? ' تعديل معلومات الطالب' : 'إضافة طالب جديد'">
       <form [formGroup]="studentForm" (ngSubmit)="saveStudent()">
-        <div class="grid p-fluid mb-4">
-          <div class="field col-12 md:col-6 lg:col-4">
+        <div class="grid p-fluid">
+          <div class="field col-12 md:col-6 lg:col-4 xl:col-3">
             <label for="fullName"
               >الاسم الكامل للطالب <span class="text-red-500">*</span></label
             >
-            <input pInputText id="fullName" formControlName="full_name" />
+            <input
+              pInputText
+              id="fullName"
+              formControlName="full_name"
+              [placeholder]="'الاسم الكامل للطالب'"
+            />
             <app-validation-message
               [control]="studentForm.get('full_name')"
             ></app-validation-message>
           </div>
 
-          <div class="field col-12 md:col-6 lg:col-4">
+          <div class="field col-12 md:col-6 lg:col-4 xl:col-3">
             <label for="phone">رقم هاتف الطالب </label>
-            <input pInputText id="phone" formControlName="phone" />
+            <input
+              pInputText
+              id="phone"
+              formControlName="phone"
+              [placeholder]="'رقم هاتف الطالب'"
+            />
             <app-validation-message
               [control]="studentForm.get('phone')"
             ></app-validation-message>
           </div>
 
-          <div class="field col-12 md:col-6 lg:col-4">
+          <div class="field col-12 md:col-6 lg:col-4 xl:col-3">
             <label for="guardianPhone">رقم هاتف ولي الأمر </label>
             <input
               pInputText
               id="guardianPhone"
               formControlName="guardian_phone"
+              [placeholder]="'رقم هاتف ولي الأمر'"
             />
             <app-validation-message
               [control]="studentForm.get('guardian_phone')"
             ></app-validation-message>
           </div>
 
-          <div class="field col-12 md:col-6 lg:col-4">
+          <div class="field col-12 md:col-6 lg:col-4 xl:col-3">
+            <label for="schoolName">
+              اسم المدرسة <span class="text-red-500">*</span></label
+            >
+            <input
+              pInputText
+              id="schoolName"
+              formControlName="school_name"
+              [placeholder]="'اسم المدرسة'"
+            />
+            <app-validation-message
+              [control]="studentForm.get('school_name')"
+            ></app-validation-message>
+          </div>
+
+          <div class="field col-12 md:col-6 lg:col-4 xl:col-3">
             <label for="grade"
               >المرحلة التعليمية <span class="text-red-500">*</span></label
             >
@@ -55,7 +81,7 @@
             ></app-validation-message>
           </div>
 
-          <div class="field col-12 md:col-6 lg:col-4">
+          <div class="field col-12 md:col-6 lg:col-4 xl:col-3">
             <label for="yearLevel"
               >الصف الدراسي <span class="text-red-500">*</span></label
             >
@@ -74,7 +100,7 @@
             ></app-validation-message>
           </div>
 
-          <div class="field col-12 md:col-6 lg:col-4">
+          <div class="field col-12 md:col-6 lg:col-4 xl:col-3">
             <label for="subjects"
               >المواد المشترك بها <span class="text-red-500">*</span></label
             >
@@ -94,54 +120,7 @@
               [control]="studentForm.get('subscribed_subjects')"
             ></app-validation-message>
           </div>
-
-          <div class="field col-12 md:col-6 lg:col-4">
-            <label for="feePlan"
-              >تصنيف خطة الرسوم <span class="text-red-500">*</span></label
-            >
-            <p-dropdown
-              id="feePlan"
-              formControlName="fee_plan"
-              [options]="feePlans"
-              optionLabel="name"
-              placeholder="اختر تصنيف الرسوم"
-            >
-            </p-dropdown>
-
-            <app-validation-message
-              [control]="studentForm.get('fee_plan')"
-            ></app-validation-message>
-          </div>
-
-          <div class="field col-12 md:col-6 lg:col-4">
-            <label for="discount"
-              >نسبة الخصم (%) <span class="text-red-500">*</span></label
-            >
-            <p-inputNumber
-              id="discount"
-              formControlName="discount_percent"
-              [showButtons]="false"
-              [min]="0"
-              [max]="100"
-              suffix="%"
-              [disabled]="!isDiscountManual"
-            >
-            </p-inputNumber>
-            <app-validation-message
-              [control]="studentForm.get('discount_percent')"
-            ></app-validation-message>
-          </div>
-          <div class="field col-12 md:col-6 lg:col-4">
-            <label for="schoolName">
-              اسم المدرسة <span class="text-red-500">*</span></label
-            >
-            <input pInputText id="schoolName" formControlName="school_name" />
-            <app-validation-message
-              [control]="studentForm.get('school_name')"
-            ></app-validation-message>
-          </div>
-
-          <div class="field col-12 md:col-6 lg:col-4">
+          <div class="field col-12 md:col-6 lg:col-4 xl:col-3">
             <label for="academicYear"
               >العام الدراسي <span class="text-red-500">*</span></label
             >
@@ -155,7 +134,47 @@
               [control]="studentForm.get('academic_year')"
             ></app-validation-message>
           </div>
-          <div class="field col-12 md:col-6 lg:col-5 flex flex-column gap-1">
+
+          <div class="field col-12 md:col-6 lg:col-4 xl:col-3 flex">
+            <div class="col-8">
+              <label for="feePlan"
+                >تصنيف خطة الرسوم <span class="text-red-500">*</span></label
+              >
+              <p-dropdown
+                id="feePlan"
+                formControlName="fee_plan"
+                [options]="feePlans"
+                optionLabel="name"
+                placeholder="اختر تصنيف الرسوم"
+              >
+              </p-dropdown>
+
+              <app-validation-message
+                [control]="studentForm.get('fee_plan')"
+              ></app-validation-message>
+            </div>
+
+            <div class="col-4">
+              <label for="discount"
+                >الخصم <span class="text-red-500">*</span></label
+              >
+              <p-inputNumber
+                id="discount"
+                formControlName="discount_percent"
+                [showButtons]="false"
+                [min]="0"
+                [max]="100"
+                suffix="%"
+                [disabled]="!isDiscountManual"
+              >
+              </p-inputNumber>
+              <app-validation-message
+                [control]="studentForm.get('discount_percent')"
+              ></app-validation-message>
+            </div>
+          </div>
+
+          <div class="field col-12 flex flex-column gap-1">
             <label for="notes text-start">ملاحظات إضافية (اختياري)</label>
             <textarea
               pInputTextarea
@@ -167,7 +186,7 @@
           </div>
         </div>
 
-        <div class="col-12 mt-4 flex justify-content-start gap-3">
+        <div class="col-12 flex justify-content-start gap-3">
           <p-button
             type="submit"
             [label]="saveLabel"
