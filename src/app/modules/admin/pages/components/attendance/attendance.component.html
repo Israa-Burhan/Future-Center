@@ -1,1 +1,244 @@
-<p>attendance works!</p>
+<div class="attendance">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="font-bold text-900">لوحة تحكم الحضور والغياب</h2>
+    </div>
+
+    <p-card
+      [header]="isEditing ? 'تعديل  الجلسة الحالية' : 'اضافة جلسة جديدة '"
+    >
+      <form [formGroup]="filterForm">
+        <div class="grid p-fluid mb-4">
+          <div class="field col-12 md:col-6 lg:col-4">
+            <label for="stage">المرحلة التعليمية</label>
+            <p-dropdown
+              id="stage"
+              formControlName="stage"
+              [options]="(stages$ | async) ?? []"
+              placeholder="اختر المرحلة"
+              optionLabel="label"
+              optionValue="value"
+              [showClear]="true"
+            ></p-dropdown>
+            <app-validation-message
+              [control]="f['stage']"
+            ></app-validation-message>
+          </div>
+
+          <div class="field col-12 md:col-6 lg:col-4">
+            <label for="yearLevel">الصف/المستوى</label>
+            <p-dropdown
+              id="yearLevel"
+              formControlName="yearLevel"
+              [options]="(yearLevels$ | async) ?? []"
+              placeholder="اختر الصف"
+              optionLabel="label"
+              optionValue="value"
+              [showClear]="true"
+              [disabled]="!f['stage'].value"
+              [emptyMessage]="'اختر المرحلة أولاً'"
+            ></p-dropdown>
+            <app-validation-message
+              [control]="f['yearLevel']"
+            ></app-validation-message>
+          </div>
+
+          <div class="field col-12 md:col-6 lg:col-4">
+            <label for="subjectId">المادة الدراسية</label>
+            <p-dropdown
+              id="subjectId"
+              formControlName="subjectId"
+              [options]="(subjects$ | async) ?? []"
+              placeholder="اختر المادة"
+              optionLabel="subject_name"
+              optionValue="subject_id"
+              [showClear]="true"
+              [disabled]="!f['yearLevel'].value"
+              [emptyMessage]="'اختر الصف أولاً'"
+            ></p-dropdown>
+            <app-validation-message
+              [control]="f['subjectId']"
+            ></app-validation-message>
+          </div>
+        </div>
+
+        <!-- <div
+          class="col-12 mt-4 flex flex-column md:flex-row justify-content-start gap-3"
+        >
+          <p-button
+            [label]="isEditMode ? 'تحديث السجلات' : 'فتح سجل الحضور'"
+            [icon]="isEditMode ? 'pi pi-save' : 'pi pi-folder-open'"
+            (onClick)="
+              isEditMode
+                ? lockAndSaveSession()
+                : fetchStudentsForAttendance(filterForm.value)
+            "
+            [loading]="sessionLoading"
+            [disabled]="
+              (isEditMode && !currentSession) ||
+              sessionLoading ||
+              !f['subjectId'].value
+            "
+            [styleClass]="isEditMode ? 'p-button-primary' : 'p-button-success'"
+          ></p-button>
+
+          <p-button
+            label="حفظ وإغلاق الجلسة"
+            icon="pi pi-lock"
+            (onClick)="lockAndSaveSession()"
+            [loading]="sessionLoading"
+            [disabled]="
+              !currentSession ||
+              sessionLoading ||
+              !(filteredStudents$ | async)?.length
+            "
+            styleClass="p-button-danger"
+          ></p-button>
+
+          <p-button
+            label="مسح الفلترة "
+            icon="pi pi-times"
+            (onClick)="clearSearch()"
+            [disabled]="isSearching || sessionLoading"
+            styleClass="p-button-secondary"
+          ></p-button>
+        </div> -->
+
+        <div
+          class="col-12 mt-4 flex flex-column md:flex-row justify-content-start gap-3"
+        >
+          <p-button
+            *ngIf="!currentSession"
+            label="فتح سجل الحضور"
+            icon="pi pi-folder-open"
+            (onClick)="fetchStudentsForAttendance(filterForm.value)"
+            [loading]="sessionLoading"
+            [disabled]="sessionLoading || !f['subjectId'].value"
+            styleClass="p-button-success"
+          ></p-button>
+
+          <p-button
+            *ngIf="currentSession && !isEditMode"
+            label="حفظ وإغلاق الجلسة"
+            icon="pi pi-lock"
+            (onClick)="lockAndSaveSession()"
+            [loading]="sessionLoading"
+            [disabled]="sessionLoading || !(filteredStudents$ | async)?.length"
+            styleClass="p-button-danger"
+          ></p-button>
+
+          <p-button
+            *ngIf="currentSession && isEditMode"
+            label="تحديث السجلات"
+            icon="pi pi-save"
+            (onClick)="lockAndSaveSession()"
+            [loading]="sessionLoading"
+            [disabled]="sessionLoading || !(filteredStudents$ | async)?.length"
+            styleClass="p-button-primary"
+          ></p-button>
+
+          <p-button
+            label="مسح الفلترة "
+            icon="pi pi-times"
+            (onClick)="clearSearch()"
+            [disabled]="sessionLoading"
+            styleClass="p-button-secondary"
+          ></p-button>
+        </div>
+      </form>
+    </p-card>
+
+    <p-table
+      [value]="(filteredStudents$ | async) ?? []"
+      [paginator]="true"
+      [rows]="10"
+      [responsive]="true"
+      sortMode="multiple"
+      [sortOrder]="1"
+      styleClass="p-datatable-gridlines p-datatable-striped py-5"
+    >
+      <ng-template pTemplate="caption">
+        <h3 class="font-bold text-center text-xl">قائمة الطلاب</h3>
+      </ng-template>
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th class="text-center">اسم الطالب</th>
+          <th class="text-center">تسجيل الحضور</th>
+          <th class="text-center">ملاحظات / سبب الغياب</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-student let-rowIndex="rowIndex">
+        <tr>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                اسم الطالب
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">{{ student.full_name }}</p>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                تسجيل الحضور
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">
+                  <p-checkbox
+                    [(ngModel)]="student.isPresent"
+                    [binary]="true"
+                  ></p-checkbox>
+                </p>
+              </div>
+            </div>
+          </td>
+
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                ملاحظات / سبب الغياب
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <input
+                  pInputText
+                  type="text"
+                  [(ngModel)]="student.attendanceNotes"
+                  [disabled]="student.isPresent"
+                  placeholder="ملاحظات / سبب الغياب..."
+                />
+              </div>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="4" class="text-center p-4">
+            {{
+              currentSession
+                ? "لا يوجد طلاب مسجلين لهذه الجلسة."
+                : "يرجى فتح جلسة جديدة أولاً."
+            }}
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

@@ -44,6 +44,8 @@ export interface FilteredStudentResult {
   base_price: number;
   discount_percent: number;
   final_price: number;
+  isPresent: boolean;
+  attendanceNotes: string | null;
 }
 @Injectable({
   providedIn: 'root',
