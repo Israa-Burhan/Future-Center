@@ -142,15 +142,32 @@ export class AttendanceService {
     if (filters.sessionDate) {
       const selectedDate = new Date(filters.sessionDate);
 
-      const startOfDay = new Date(selectedDate);
-      startOfDay.setHours(0, 0, 0, 0);
+      const startOfDayUTC = new Date(
+        Date.UTC(
+          selectedDate.getFullYear(),
+          selectedDate.getMonth(),
+          selectedDate.getDate(),
+          0,
+          0,
+          0,
+          0
+        )
+      );
 
-      const endOfDay = new Date(selectedDate);
-      endOfDay.setHours(23, 59, 59, 999);
+      const endOfDayUTC = new Date(
+        Date.UTC(
+          selectedDate.getFullYear(),
+          selectedDate.getMonth(),
+          selectedDate.getDate(),
+          23,
+          59,
+          59,
+          999
+        )
+      );
 
-      query = query.gte('session_date', startOfDay.toISOString());
-
-      query = query.lte('session_date', endOfDay.toISOString());
+      query = query.gte('session_date', startOfDayUTC.toISOString());
+      query = query.lte('session_date', endOfDayUTC.toISOString());
     }
     if (filters.yearLevel !== null && filters.yearLevel !== undefined) {
       query = query.eq('year_level', filters.yearLevel);
