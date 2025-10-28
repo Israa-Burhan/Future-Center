@@ -419,7 +419,7 @@ export class StudentsComponent implements OnInit {
 
         const isValueValid = levels.some((l) => l.value === currentYearLevel);
         if (currentYearLevel !== null && !isValueValid) {
-          yearLevelControl?.setValue(null, { emitEvent: false }); // لا تطلق حدث لإعادة تحميل كل شيء مرتين
+          yearLevelControl?.setValue(null, { emitEvent: false });
         }
       });
   }
@@ -434,20 +434,16 @@ export class StudentsComponent implements OnInit {
     }
 
     this.isEditing = true;
-    this.editingStudentId = student.id ?? null;
+    this.editingStudentId = student.student_id ?? null;
 
     const studentData: Student = JSON.parse(JSON.stringify(student)); // Deep Copy!
-
-    console.log('🟢 START: بدأ وضع التعديل (isEditing = true)');
-    // 💡 Logging: تأكيد القيمة داخل الدالة
-    console.log('   🔗 بيانات الطالب المحملة (الاسم):', studentData.full_name);
 
     const feePlanObject =
       this.feePlans.find((p) => p.name === studentData.fee_plan) ||
       this.feePlans[0];
     const discountControl = this.studentForm.get('discount_percent');
     const gradeControl = this.studentForm.get('grade');
-    const yearLevelControl = this.studentForm.get('year_level'); // 1️⃣ تعيين كافة الحقول الأساسية باستخدام النسخة الجديدة (studentData)
+    const yearLevelControl = this.studentForm.get('year_level');
 
     this.studentForm.patchValue(
       {
@@ -488,7 +484,7 @@ export class StudentsComponent implements OnInit {
   }
 
   deleteStudent(student: Student): void {
-    const idToDelete = student.id;
+    const idToDelete = student.student_id;
 
     this.confirmationService.confirm({
       message: `هل أنت متأكد تماماً من حذف الطالب  نهائياً؟ سيتم مسح بياناته من قاعدة البيانات.`,

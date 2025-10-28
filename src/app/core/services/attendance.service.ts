@@ -219,7 +219,9 @@ export class AttendanceService {
   ): Observable<AttendanceRecordWithDetails[]> {
     const promise = this.supabase
       .from(this.RECORDS_TABLE)
-      .select(`*, students (full_name)`)
+      .select(
+        `id, session_id, student_id, present, absent_reason, students (full_name)`
+      )
       .eq('session_id', sessionId);
 
     return from(promise).pipe(

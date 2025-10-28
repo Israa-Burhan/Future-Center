@@ -1,4 +1,4 @@
-<div class="students">
+<div class="students_summary">
   <div class="container">
     <div class="text-center mb-5">
       <h2 class="font-bold text-900">لوحة تحكم اشتركات الطلاب</h2>
@@ -7,7 +7,23 @@
     <p-card>
       <form [formGroup]="filterForm">
         <div class="grid p-fluid mb-4">
-          <div class="field col-12 md:col-6 lg:col-4">
+          <div class="field col-12 md:col-6">
+            <label for="paymentMonth"> اختر شهر الدفع </label>
+            <p-calendar
+              id="paymentMonth"
+              formControlName="paymentMonth"
+              view="month"
+              dateFormat="mm/yy"
+              placeholder="اختر الشهر"
+              [showIcon]="true"
+              [readonlyInput]="true"
+              [showClear]="false"
+              (onSelect)="searchStudents()"
+              (onClear)="f['paymentMonth'].setValue(currentPaymentDate)"
+            ></p-calendar>
+          </div>
+
+          <div class="field col-12 md:col-6">
             <label for="stage">المرحلة التعليمية</label>
             <p-dropdown
               id="stage"
@@ -23,8 +39,8 @@
             ></app-validation-message>
           </div>
 
-          <div class="field col-12 md:col-6 lg:col-4">
-            <label for="yearLevel">الصف/المستوى</label>
+          <div class="field col-12 md:col-6">
+            <label for="yearLevel">الصف </label>
             <p-dropdown
               id="yearLevel"
               formControlName="yearLevel"
@@ -41,39 +57,41 @@
             ></app-validation-message>
           </div>
 
-          <div class="field col-12 md:col-6 lg:col-4">
-            <label for="subjectId">المادة الدراسية</label>
+          <div class="field col-12 md:col-6">
+            <label for="paymentStatus">حالة الدفع</label>
             <p-dropdown
-              id="subjectId"
-              formControlName="subjectId"
-              [options]="(subjects$ | async) ?? []"
-              placeholder="اختر المادة"
-              optionLabel="subject_name"
-              optionValue="subject_id"
-              [showClear]="true"
-              [disabled]="!f['yearLevel'].value"
-              [emptyMessage]="'اختر الصف أولاً'"
+              id="paymentStatus"
+              formControlName="paymentStatus"
+              [options]="paymentStatusOptions"
+              placeholder="فلترة حسب الحالة"
+              optionLabel="label"
+              optionValue="value"
             ></p-dropdown>
-            <app-validation-message
-              [control]="f['subjectId']"
-            ></app-validation-message>
           </div>
         </div>
 
-        <div class="col-12 mt-4 flex justify-content-start gap-3">
+        <div
+          class="col-12 mt-4 flex flex-column md:flex-row justify-content-start gap-3"
+        >
           <p-button
             label="بحث عن الطلاب"
             icon="pi pi-search"
             (onClick)="searchStudents()"
             [loading]="isSearching"
             [disabled]="
-              !f['stage'].value ||
-              !f['yearLevel'].value ||
-              !f['subjectId'].value ||
-              isSearching
+              !f['stage'].value || !f['yearLevel'].value || isSearching
             "
             styleClass="p-button-success"
           ></p-button>
+
+          <p-button
+            label="تسجيل دفعة جديدة"
+            icon="pi pi-plus-circle"
+            (onClick)="openNewPaymentDialog()"
+            styleClass="p-button-primary "
+            [disabled]="isSearching || isDataEmpty()"
+          ></p-button>
+
           <p-button
             label="مسح البحث"
             icon="pi pi-times"
@@ -100,11 +118,21 @@
 
       <ng-template pTemplate="header">
         <tr>
-          <th>اسم الطالب</th>
-          <th>المادة</th>
-          <th>السعر الأساسي</th>
-          <th>الخصم (%)</th>
-          <th>السعر النهائي</th>
+          <th class="text-center" pSortableColumn="full_name">
+            اسم الطالب <p-sortIcon field="full_name"></p-sortIcon>
+          </th>
+          <th class="text-center" pSortableColumn="year_level">
+            المستوى <p-sortIcon field="year_level"></p-sortIcon>
+          </th>
+          <th class="text-center" style="width: 10rem">المواد والاسعار</th>
+          <th class="text-center">المجموع قبل الخصم</th>
+          <th class="text-center">نسبة الخصم</th>
+          <th class="text-center">المجموع بعد الخصم</th>
+          <th class="text-center">الحالة</th>
+          <th class="text-center">تاريخ الدفع</th>
+          <th class="text-center">الطريقة</th>
+          <th class="text-center">الملاحظات</th>
+          <th class="text-center">الإجراء</th>
         </tr>
       </ng-template>
 
@@ -124,39 +152,61 @@
               </div>
             </div>
           </td>
+
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">الصف</p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">{{ student.year_level }}</p>
+              </div>
+            </div>
+          </td>
+
           <td>
             <div
               class="flex lg:justify-content-center justify-content-between flex-row"
             >
               <p class="lg:hidden sm:inline row_data start-list w-max">
-                المادة
+                المواد ولأسعار
               </p>
               <div
                 class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
               >
-                <p class="row_data mb-0">{{ student.subject_name }}</p>
+                <div class="row_data mb-0">
+                  <ul class="list-decimal">
+                    <ng-container *ngFor="let m of student.subscribed_subjects">
+                      <li class="text-sm">
+                        {{ m.subject_name }} :
+                        {{ m.base_price | number : "1.0-2" : "ar" }} ج.م
+                      </li>
+                    </ng-container>
+                  </ul>
+                </div>
               </div>
             </div>
           </td>
+
           <td>
             <div
               class="flex lg:justify-content-center justify-content-between flex-row"
             >
               <p class="lg:hidden sm:inline row_data start-list w-max">
-                السعر الأساسي
+                المجموع قبل الخصم
               </p>
               <div
                 class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
               >
                 <p class="row_data mb-0">
-                  {{
-                    student.base_price
-                      | currency : "EGP" : "symbol" : "1.0-2" : "ar"
-                  }}
+                  {{ student.total_base_price | number : "1.0-2" : "ar" }} ج.م
                 </p>
               </div>
             </div>
           </td>
+
           <td>
             <div
               class="flex lg:justify-content-center justify-content-between flex-row"
@@ -171,32 +221,251 @@
               </div>
             </div>
           </td>
+
           <td>
             <div
               class="flex lg:justify-content-center justify-content-between flex-row"
             >
               <p class="lg:hidden sm:inline row_data start-list w-max">
-                السعر النهائي
+                المجموع بعد الخصم
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">
+                  {{ student.final_price | number : "1.0-2" : "ar" }} ج.م
+                </p>
+              </div>
+            </div>
+          </td>
+
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                الحالة
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">
+                  <p-tag
+                    [severity]="student.is_paid ? 'success' : 'danger'"
+                    [icon]="student.is_paid ? 'pi pi-check' : 'pi pi-times'"
+                    [value]="student.is_paid ? 'مدفوع' : 'غير مدفوع'"
+                  >
+                  </p-tag>
+                </p>
+              </div>
+            </div>
+          </td>
+
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                تاريخ الدفعة
               </p>
               <div
                 class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
               >
                 <p class="row_data mb-0">
                   {{
-                    student.final_price
-                      | currency : "EGP" : "symbol" : "1.0-2" : "ar"
+                    student.is_paid ? formatPaymentDate(student.paid_at) : "-"
                   }}
                 </p>
               </div>
             </div>
           </td>
+
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                طريقة الدفع
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">
+                  {{ student.is_paid ? student.method : "-" }}
+                </p>
+              </div>
+            </div>
+          </td>
+
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                ملاحظات
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">
+                  {{ student.is_paid ? student.notes || "-" : "-" }}
+                </p>
+              </div>
+            </div>
+          </td>
+
+          <td class="text-center">
+            <div class="flex justify-content-center gap-2">
+              <p-button
+                icon="pi pi-pencil "
+                styleClass="p-button-sm p-button-info p-button-text"
+                label="تعديل"
+                tooltipPosition="top"
+                [pTooltip]="
+                  student.is_paid
+                    ? 'تعديل الدفعة'
+                    : 'لا يمكن تعديل دفعة غير مسجلة'
+                "
+                (onClick)="openPaymentDialog(student, true)"
+                [disabled]="!student.is_paid"
+              >
+              </p-button>
+            </div>
+          </td>
         </tr>
       </ng-template>
+
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td colspan="11" class="text-center p-4">لا يوجد بيانات متاحة</td>
+          <td colspan="11" class="text-center p-4">
+            <span *ngIf="isSearching">جارٍ البحث...</span>
+            <span *ngIf="!(filteredStudents$ | async)?.length && !isSearching"
+              >لا يوجد طلاب متاحين بهذا الفلتر</span
+            >
+          </td>
         </tr>
       </ng-template>
     </p-table>
+
+    <p-dialog
+      [(visible)]="displayPaymentDialog"
+      [header]="dialogHeader"
+      [modal]="true"
+      [style]="{ 'max-width': '90vw', width: '500px' }"
+      [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
+      [draggable]="false"
+      [resizable]="false"
+      [closable]="!isSaving"
+    >
+      <form [formGroup]="paymentDialogForm" (ngSubmit)="savePayment()">
+        <div class="p-fluid grid">
+          <div class="field col-12" *ngIf="!isEditMode">
+            <label for="studentSelect">اختر الطالب لتسجيل الدفعة *</label>
+            <p-dropdown
+              formControlName="selectedStudentId"
+              [options]="unpaidStudentsOptions"
+              optionLabel="full_name"
+              optionValue="student_id"
+              [filter]="true"
+              [showClear]="true"
+              inputId="studentSelect"
+              emptyMessage="لا يوجد طلاب غير مدفوعين في هذه القائمة"
+            ></p-dropdown>
+            <app-validation-message
+              [control]="fDialog['selectedStudentId']"
+            ></app-validation-message>
+          </div>
+
+          <div class="field col-12" *ngIf="currentStudent">
+            <p class="font-bold text-lg mb-2">
+              الطالب: {{ currentStudent.full_name }}
+            </p>
+            <p class="text-600 mb-4">
+              المبلغ المستحق:
+              <span class="font-bold text-primary text-xl">
+                {{
+                  currentStudent.final_price
+                    | currency : "EGP" : "symbol" : "1.0-2" : "ar"
+                }}
+              </span>
+            </p>
+          </div>
+
+          <div
+            class="field col-12 mb-3 flex align-items-center"
+            *ngIf="currentStudent"
+          >
+            <p-checkbox
+              formControlName="is_paid"
+              [binary]="true"
+              label="تم الدفع لهذا الشهر"
+              inputId="is_paid_check"
+            ></p-checkbox>
+          </div>
+
+          <ng-container *ngIf="fDialog['is_paid'].value && currentStudent">
+            <div class="field col-12 md:col-6">
+              <label for="paid_at">تاريخ الدفع *</label>
+              <p-calendar
+                id="paid_at"
+                formControlName="paid_at"
+                dateFormat="dd/mm/yy"
+                placeholder="التاريخ"
+                [showIcon]="true"
+                [readonlyInput]="true"
+                [showClear]="false"
+              ></p-calendar>
+              <app-validation-message
+                [control]="fDialog['paid_at']"
+              ></app-validation-message>
+            </div>
+
+            <div class="field col-12 md:col-6">
+              <label for="method">طريقة الدفع *</label>
+              <p-dropdown
+                id="method"
+                formControlName="method"
+                [options]="paymentMethods"
+                placeholder="اختر طريقة الدفع"
+                optionLabel="label"
+                optionValue="value"
+                [showClear]="true"
+              ></p-dropdown>
+              <app-validation-message
+                [control]="fDialog['method']"
+              ></app-validation-message>
+            </div>
+
+            <div class="field col-12">
+              <label for="notes">ملاحظات (اختياري)</label>
+              <textarea
+                pInputTextarea
+                id="notes"
+                formControlName="notes"
+                rows="3"
+              ></textarea>
+            </div>
+          </ng-container>
+
+          <div class="col-12 flex justify-content-end gap-2 mt-4">
+            <p-button
+              type="submit"
+              [label]="isSaving ? 'جارٍ الحفظ...' : 'حفظ الدفعة'"
+              icon="pi pi-save"
+              [disabled]="isSaving || paymentDialogForm.invalid"
+              [loading]="isSaving"
+              styleClass="p-button-success"
+            ></p-button>
+            <p-button
+              label="إلغاء"
+              icon="pi pi-times"
+              (onClick)="displayPaymentDialog = false"
+              [disabled]="isSaving"
+              styleClass="p-button-secondary"
+            ></p-button>
+          </div>
+        </div>
+      </form>
+    </p-dialog>
   </div>
 </div>

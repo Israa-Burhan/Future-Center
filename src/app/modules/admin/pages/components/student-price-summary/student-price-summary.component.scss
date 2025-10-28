@@ -1,6 +1,6 @@
 @import "../../../../../../assets/styles/scss/mixins";
 @import "../../../../../../assets/styles/helpers/table";
-.students {
+.students_summary {
   h2 {
     font-size: var(--h2);
     @include responsive(sm) {
@@ -12,6 +12,21 @@
     align-items: center;
     box-shadow: none;
     border-radius: 12px;
+  }
+  textarea {
+    padding: 12px;
+    align-items: center;
+    box-shadow: none;
+    border-radius: 12px;
+  }
+  textarea {
+    border: 1px solid var(--border-gray);
+    resize: none;
+    min-height: 120px;
+    &:focus {
+      border-color: var(--primary-focus);
+      outline: none;
+    }
   }
 }
 ::ng-deep {
@@ -44,5 +59,9 @@
     .p-dropdown-empty-message {
       padding: 10px 5px;
     }
+  }
+  .p-tag {
+    padding: 7px 6px;
+    border-radius: 10px;
   }
 }

@@ -9,7 +9,6 @@ export interface Subject {
   educational_stage: string;
   year_level_code: number;
   base_price: number;
-  is_deleted: boolean;
 }
 
 export type SubjectInsert = Omit<Subject, 'subject_id' | 'is_deleted'>;

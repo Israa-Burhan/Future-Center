@@ -223,7 +223,7 @@ export class AttendanceComponent implements OnInit {
           const recordsMap = new Map(records.map((r) => [r.student_id, r]));
 
           return students.map((student) => {
-            const record = recordsMap.get(student.id);
+            const record = recordsMap.get(student.student_id);
             return {
               ...student,
               isPresent: record ? record.present : false,
@@ -330,7 +330,7 @@ export class AttendanceComponent implements OnInit {
             (student) =>
               ({
                 session_id: currentSessionId,
-                student_id: student.id,
+                student_id: student.student_id,
                 present: student.isPresent,
                 absent_reason: student.attendanceNotes || null,
               } as AttendanceRecordInput)
