@@ -21,3 +21,35 @@ export interface ClassSchedule {
   subject: string;
   class_level_scope: string;
 }
+
+export interface TeacherPayment {
+  payment_id: string;
+  teacher_id: number;
+  month_year: string;
+
+  base_wage: number;
+  bonuses: number;
+  deductions: number;
+  final_amount: number;
+
+  is_paid: boolean;
+  paid_at: string | null;
+  notes: string | null;
+  created_at: string;
+}
+
+export interface PaymentInsertUpdate {
+  payment_id?: string;
+
+  teacher_id: number;
+  month_year: string;
+
+  base_wage: number;
+  bonuses: number;
+  deductions: number;
+  final_amount: number;
+
+  is_paid: boolean;
+  paid_at: string | null;
+  notes: string | null;
+}

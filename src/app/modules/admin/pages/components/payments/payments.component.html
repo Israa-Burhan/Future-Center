@@ -1,1 +1,453 @@
-<p>payments works!</p>
+<div class="teachers_payments">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="font-bold text-900">إدارة مدفوعات المعلمين</h2>
+    </div>
+
+    <p-card>
+      <div class="p-fluid grid mb-4">
+        <div class="field col-12 md:col-6 lg:col-4">
+          <label for="teacherSearch">البحث باسم المعلم</label>
+          <input
+            pInputText
+            type="text"
+            placeholder="البحث باسم المعلم"
+            [(ngModel)]="teacherSearchTerm"
+            (input)="applyFilter()"
+            class="p-inputtext-sm"
+          />
+        </div>
+
+        <div class="field col-12 md:col-6 lg:col-4">
+          <label for="paymentMonth">اختر شهر الدفعة</label>
+          <p-calendar
+            id="paymentMonth"
+            [(ngModel)]="selectedMonth"
+            view="month"
+            dateFormat="mm/yy"
+            placeholder="اختر الشهر"
+            (onSelect)="searchPayments()"
+            [showIcon]="false"
+            [readonlyInput]="true"
+            [showClear]="false"
+          >
+          </p-calendar>
+        </div>
+      </div>
+
+      <div
+        class="col-12 mt-4 flex flex-column md:flex-row justify-content-start gap-3"
+      >
+        <p-button
+          label="تسجيل دفعة جديدة"
+          icon="pi pi-plus-circle"
+          (onClick)="openGeneralPaymentDialog()"
+          styleClass="p-button-primary"
+          [disabled]="isLoading"
+        ></p-button>
+
+        <p-button
+          label="تصدير إلى Excel"
+          icon="pi pi-file-excel"
+          styleClass="p-button-secondary"
+          [disabled]="!filteredSummary || filteredSummary.length === 0"
+        ></p-button>
+      </div>
+    </p-card>
+
+    <p-table
+      [value]="filteredSummary"
+      [loading]="isLoading"
+      [paginator]="true"
+      [rows]="10"
+      styleClass="p-datatable-gridlines p-datatable-striped py-5"
+    >
+      <ng-template pTemplate="caption">
+        <h3 class="font-bold text-center text-xl">قائمة المدفوعات للمعلمين</h3>
+      </ng-template>
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th class="text-center">اسم المعلم</th>
+          <th class="text-center">المسمى الوظيفي</th>
+          <th class="text-center">الراتب الاساسي (ج.م)</th>
+          <th class="text-center">المكافآت (ج.م)</th>
+          <th class="text-center">الخصومات (ج.م)</th>
+          <th class="text-center">المبلغ الكلي (ج.م)</th>
+          <th class="text-center">الحالة</th>
+          <th class="text-center">تاريخ ووقت السداد</th>
+          <th class="text-center">الملاحظات</th>
+          <th class="text-center">الإجراء</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-summary>
+        <tr>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                اسم المعلم
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">{{ summary.name }}</p>
+              </div>
+            </div>
+          </td>
+
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                المسمى الوظيفي
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">{{ summary.title }}</p>
+              </div>
+            </div>
+          </td>
+
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                الراتب الأساسي (ج.م)
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">
+                  {{
+                    summary.current_payment?.base_wage !== null &&
+                    summary.current_payment?.base_wage !== undefined
+                      ? (summary.current_payment.base_wage | number : "1.2-2")
+                      : "0.00"
+                  }}
+                </p>
+              </div>
+            </div>
+          </td>
+
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                المكافآت (ج.م)
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">
+                  {{
+                    summary.current_payment?.bonuses !== null &&
+                    summary.current_payment?.bonuses !== undefined
+                      ? (summary.current_payment.bonuses | number : "1.2-2")
+                      : "0.00"
+                  }}
+                </p>
+              </div>
+            </div>
+          </td>
+
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                الخصومات (ج.م)
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">
+                  {{
+                    summary.current_payment?.deductions !== null &&
+                    summary.current_payment?.deductions !== undefined
+                      ? (summary.current_payment.deductions | number : "1.2-2")
+                      : "0.00"
+                  }}
+                </p>
+              </div>
+            </div>
+          </td>
+
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                المبلغ الكلي (ج.م)
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">
+                  {{
+                    summary.current_payment?.final_amount !== null &&
+                    summary.current_payment?.final_amount !== undefined
+                      ? (summary.current_payment.final_amount
+                        | number : "1.2-2")
+                      : "---"
+                  }}
+                </p>
+              </div>
+            </div>
+          </td>
+
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                الحالة
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p-tag
+                  [severity]="
+                    summary.current_payment?.is_paid ? 'success' : 'danger'
+                  "
+                  [icon]="
+                    summary.current_payment?.is_paid
+                      ? 'pi pi-check'
+                      : 'pi pi-times'
+                  "
+                  [value]="
+                    summary.current_payment?.is_paid ? 'مدفوع' : 'غير مدفوع'
+                  "
+                ></p-tag>
+              </div>
+            </div>
+          </td>
+
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                تاريخ الدفعة
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">
+                  {{
+                    summary.current_payment?.paid_at
+                      ? (summary.current_payment.paid_at
+                        | date : "short" : "ar")
+                      : "---"
+                  }}
+                </p>
+              </div>
+            </div>
+          </td>
+
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                الملاحظات
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">
+                  {{ summary.current_payment?.notes || "---" }}
+                </p>
+              </div>
+            </div>
+          </td>
+
+          <td class="text-center">
+            <div class="flex justify-content-center gap-2">
+              <p-button
+                icon="pi pi-pencil"
+                styleClass="p-button-sm p-button-info p-button-text"
+                label="تعديل"
+                tooltipPosition="top"
+                pTooltip="تعديل الدفعة المدفوعة"
+                (onClick)="openPaymentDialog(summary.id)"
+                [disabled]="
+                  !summary.current_payment ||
+                  summary.current_payment.is_paid === false
+                "
+              >
+              </p-button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="9" class="text-center p-4">
+            <span *ngIf="isLoading">جارٍ البحث...</span>
+            <span *ngIf="!isLoading"
+              >لا توجد سجلات دفع مطابقة لمعايير البحث.</span
+            >
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+
+    <p-dialog
+      [(visible)]="displayPaymentDialog"
+      [header]="
+        selectedTeacherForPayment ? 'تعديل دفعة المعلم' : 'تسجيل دفعة جديدة'
+      "
+      [modal]="true"
+      [style]="{ 'max-width': '90vw', width: '500px' }"
+      [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
+      [draggable]="false"
+      [resizable]="false"
+    >
+      <form
+        [formGroup]="paymentForm"
+        (ngSubmit)="savePayment()"
+        *ngIf="paymentForm"
+      >
+        <div class="p-fluid grid">
+          <div class="field col-12" *ngIf="!selectedTeacherForPayment">
+            <label for="teacher_id_select"
+              >اختر المعلم لتسجيل الدفعة
+              <span class="text-red-500">*</span></label
+            >
+            <p-dropdown
+              id="teacher_id_select"
+              [options]="availableTeachersForNewPayment"
+              formControlName="teacher_id_select"
+              optionLabel="name"
+              optionValue="id"
+              placeholder="اختر المعلم"
+              [filter]="true"
+              [showClear]="true"
+            ></p-dropdown>
+            <app-validation-message
+              [control]="f['teacher_id_select']"
+            ></app-validation-message>
+          </div>
+
+          <div class="field col-12" *ngIf="selectedTeacherForPayment">
+            <p class="font-bold text-lg mb-2">
+              المعلم: {{ selectedTeacherForPayment.name }}
+            </p>
+            <p class="text-600 mb-4">
+              الشهر:
+              <span class="font-bold text-primary">{{
+                selectedMonth | date : "MMMM yyyy"
+              }}</span>
+            </p>
+          </div>
+
+          <div class="field col-12 md:col-4">
+            <label for="base_wage"
+              >الراتب الاساسي (ج.م) <span class="text-red-500">*</span></label
+            >
+            <p-inputNumber
+              inputId="base_wage"
+              mode="decimal"
+              formControlName="base_wage"
+              [min]="0"
+            ></p-inputNumber>
+            <app-validation-message
+              [control]="f['base_wage']"
+            ></app-validation-message>
+          </div>
+
+          <div class="field col-12 md:col-4">
+            <label for="bonuses"> المكافآت (ج.م) </label>
+            <p-inputNumber
+              inputId="bonuses"
+              mode="decimal"
+              formControlName="bonuses"
+              [min]="0"
+            ></p-inputNumber>
+          </div>
+
+          <div class="field col-12 md:col-4">
+            <label for="deductions">الخصومات (ج.م)</label>
+            <p-inputNumber
+              inputId="deductions"
+              mode="decimal"
+              formControlName="deductions"
+              [min]="0"
+            ></p-inputNumber>
+          </div>
+
+          <div
+            class="col-12 text-xl font-bold border-top-1 border-gray-300 pt-3 mt-3 flex justify-content-between align-items-center"
+          >
+            <span>المبلغ الكلي (ج.م):</span>
+            <span class="text-green-500 text-2xl">{{
+              finalAmount | number
+            }}</span>
+          </div>
+
+          <div class="field col-12 mb-3 flex align-items-center">
+            <p-checkbox
+              formControlName="is_paid"
+              [binary]="true"
+              label="تم السداد؟"
+              inputId="is_paid_check"
+            ></p-checkbox>
+          </div>
+
+          <div class="field col-12" *ngIf="paymentForm.get('is_paid')?.value">
+            <label for="paid_at"
+              >تاريخ السداد الفعلي <span class="text-red-500">*</span></label
+            >
+            <p-calendar
+              inputId="paid_at"
+              formControlName="paid_at"
+              [showTime]="true"
+              dateFormat="dd/mm/yy"
+              placeholder="اختر تاريخ السداد"
+              [showIcon]="true"
+            ></p-calendar>
+            <app-validation-message
+              [control]="f['paid_at']"
+            ></app-validation-message>
+          </div>
+
+          <div class="field col-12 flex flex-column">
+            <label for="notes">ملاحظات (اختياري)</label>
+            <textarea
+              pInputTextarea
+              id="notes"
+              formControlName="notes"
+              rows="3"
+            ></textarea>
+          </div>
+
+          <div class="col-12 flex justify-content-end gap-2 mt-4">
+            <p-button
+              type="submit"
+              [label]="isLoading ? 'جارٍ الحفظ...' : 'حفظ الدفعة'"
+              icon="pi pi-save"
+              [disabled]="isLoading || paymentForm.invalid"
+              [loading]="isLoading"
+              styleClass="p-button-primary"
+            ></p-button>
+            <p-button
+              label="إلغاء"
+              icon="pi pi-times"
+              (onClick)="displayPaymentDialog = false"
+              [disabled]="isLoading"
+              styleClass="p-button-secondary"
+            ></p-button>
+          </div>
+        </div>
+      </form>
+    </p-dialog>
+  </div>
+</div>

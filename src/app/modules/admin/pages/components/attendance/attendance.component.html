@@ -62,48 +62,6 @@
           </div>
         </div>
 
-        <!-- <div
-          class="col-12 mt-4 flex flex-column md:flex-row justify-content-start gap-3"
-        >
-          <p-button
-            [label]="isEditMode ? 'تحديث السجلات' : 'فتح سجل الحضور'"
-            [icon]="isEditMode ? 'pi pi-save' : 'pi pi-folder-open'"
-            (onClick)="
-              isEditMode
-                ? lockAndSaveSession()
-                : fetchStudentsForAttendance(filterForm.value)
-            "
-            [loading]="sessionLoading"
-            [disabled]="
-              (isEditMode && !currentSession) ||
-              sessionLoading ||
-              !f['subjectId'].value
-            "
-            [styleClass]="isEditMode ? 'p-button-primary' : 'p-button-success'"
-          ></p-button>
-
-          <p-button
-            label="حفظ وإغلاق الجلسة"
-            icon="pi pi-lock"
-            (onClick)="lockAndSaveSession()"
-            [loading]="sessionLoading"
-            [disabled]="
-              !currentSession ||
-              sessionLoading ||
-              !(filteredStudents$ | async)?.length
-            "
-            styleClass="p-button-danger"
-          ></p-button>
-
-          <p-button
-            label="مسح الفلترة "
-            icon="pi pi-times"
-            (onClick)="clearSearch()"
-            [disabled]="isSearching || sessionLoading"
-            styleClass="p-button-secondary"
-          ></p-button>
-        </div> -->
-
         <div
           class="col-12 mt-4 flex flex-column md:flex-row justify-content-start gap-3"
         >
