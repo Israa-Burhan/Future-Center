@@ -39,6 +39,7 @@ import { ValidationMessagePage } from '../../../../shared/components/validation-
 import { RxwebValidators } from '@rxweb/reactive-form-validators';
 import { AcademicDataService } from '../../../../../core/services/academic-data.service';
 import { NotificationService } from '../../../../../core/services/notification.service';
+import { AuthService } from '../../../../auth/services/auth.service';
 
 interface FeePlanOption {
   name: string;
@@ -68,6 +69,7 @@ interface FeePlanOption {
   styleUrl: './students.component.scss',
 })
 export class StudentsComponent implements OnInit {
+  currentRole: 'admin' | 'staff' | 'security' | null = null;
   private fb = inject(FormBuilder);
   private studentService = inject(StudentService);
   private academicDataService = inject(AcademicDataService);
@@ -97,9 +99,10 @@ export class StudentsComponent implements OnInit {
   isDiscountManual: boolean = false;
   isSubmitting: boolean = false;
 
-  constructor() {}
+  constructor(private authService: AuthService) {}
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
+    this.currentRole = await this.authService.getRole();
     this.stages$ = this.academicDataService.stages$;
     this.initForm();
     this.setupAcademicFiltering();

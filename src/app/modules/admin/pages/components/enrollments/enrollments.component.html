@@ -203,6 +203,7 @@
               class="p-button-secondary p-button-text"
             ></button>
             <button
+              *ngIf="currentRole === 'admin'"
               pButton
               icon="pi pi-trash"
               label="حذف"

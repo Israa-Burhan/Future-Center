@@ -52,7 +52,7 @@ export const adminRoutes: Routes = [
             (m) => m.ClassesComponent
           ),
         data: {
-          roles: ['admin'],
+          roles: ['admin', 'staff'],
           nav: { label: 'جدولة الحصص', icon: 'pi pi-book', order: 4 },
         },
       },

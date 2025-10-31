@@ -20,6 +20,7 @@ import {
 import { ValidationMessagePage } from '../../../../shared/components/validation-message/validation-message.page';
 import { RxwebValidators } from '@rxweb/reactive-form-validators';
 import { NotificationService } from '../../../../../core/services/notification.service';
+import { AuthService } from '../../../../auth/services/auth.service';
 
 type ScheduleDTO = {
   id: number | string;
@@ -50,10 +51,12 @@ type ScheduleDTO = {
   styleUrl: './classes.component.scss',
 })
 export class ClassesComponent implements OnInit {
+  currentRole: 'admin' | 'staff' | 'security' | null = null;
   private fb = inject(FormBuilder);
   private teacherService = inject(TeacherService);
   private notificationService = inject(NotificationService);
   private confirmationService = inject(ConfirmationService);
+  constructor(private authService: AuthService) {}
 
   scheduleForm = this.fb.group({
     teacherId: [null as number | null, RxwebValidators.required()],
@@ -134,7 +137,8 @@ export class ClassesComponent implements OnInit {
     },
   ];
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
+    this.currentRole = await this.authService.getRole();
     forkJoin({
       teachers: this.teacherService.getAllTeachers(),
       schedules: this.teacherService.getAllSchedules(),

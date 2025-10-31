@@ -27,6 +27,8 @@ import { ValidationMessagePage } from '../../../../shared/components/validation-
 import { RxwebValidators } from '@rxweb/reactive-form-validators';
 import { NotificationService } from '../../../../../core/services/notification.service';
 import { AcademicDataService } from '../../../../../core/services/academic-data.service';
+import { ShowForRolesDirective } from '../../../../../core/directives/show-for-roles.directive';
+import { AuthService } from '../../../../auth/services/auth.service';
 
 @Component({
   selector: 'app-subjects',
@@ -49,6 +51,7 @@ import { AcademicDataService } from '../../../../../core/services/academic-data.
   styleUrl: './subjects.component.scss',
 })
 export class SubjectsComponent implements OnInit {
+  currentRole: 'admin' | 'staff' | 'security' | null = null;
   private fb = inject(FormBuilder);
   private subjectService = inject(SubjectService);
   private notificationService = inject(NotificationService);
@@ -62,8 +65,10 @@ export class SubjectsComponent implements OnInit {
   availableYearLevels: SelectItem[] = [];
   isEditing: boolean = false;
   editingSubjectId: string | null = null;
+  constructor(private authService: AuthService) {}
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
+    this.currentRole = await this.authService.getRole();
     this.initForm();
     this.loadSubjects();
     this.academicDataService

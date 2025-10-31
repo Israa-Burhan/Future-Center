@@ -36,6 +36,7 @@ import {
 import { CalendarModule } from 'primeng/calendar';
 import { InputTextModule } from 'primeng/inputtext';
 import { NotificationService } from '../../../../../core/services/notification.service';
+import { AuthService } from '../../../../auth/services/auth.service';
 
 @Component({
   selector: 'app-enrollments',
@@ -57,6 +58,7 @@ import { NotificationService } from '../../../../../core/services/notification.s
   styleUrl: './enrollments.component.scss',
 })
 export class EnrollmentsComponent implements OnInit {
+  currentRole: 'admin' | 'staff' | 'security' | null = null;
   private fb = inject(FormBuilder);
   private attendanceService = inject(AttendanceService);
   private academicDataService = inject(AcademicDataService);
@@ -76,7 +78,7 @@ export class EnrollmentsComponent implements OnInit {
   reviewRecords$: Observable<AttendanceRecordWithDetails[] | null> = of(null);
   reviewSessionTitle: string = '';
 
-  constructor() {
+  constructor(private authService: AuthService) {
     this.filterForm = this.fb.group({
       searchText: [null as string | null],
       sessionDate: [null as string | null],
@@ -89,7 +91,8 @@ export class EnrollmentsComponent implements OnInit {
     this.yearLevels$ = of([]);
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
+    this.currentRole = await this.authService.getRole();
     this.setupAcademicFiltering();
     this.setupSubjectFiltering();
     this.setupDataFetching();
