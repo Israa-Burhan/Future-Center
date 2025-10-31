@@ -109,12 +109,21 @@ export class SubjectsComponent implements OnInit {
       .subscribe((levels) => {
         this.availableYearLevels = levels;
 
-        const currentYearCode = this.subjectForm.get('year_level_code')?.value;
+        const yearLevelControl = this.subjectForm.get('year_level_code');
+        if (stage === 'اخصائي صعوبات التعلم واطفال التوحد') {
+          yearLevelControl?.clearValidators();
+          yearLevelControl?.setValue(13, { emitEvent: false });
+        } else {
+          yearLevelControl?.setValidators(RxwebValidators.required());
+        }
+        yearLevelControl?.updateValueAndValidity();
+
+        const currentYearCode = yearLevelControl?.value;
         const isValueValid = this.availableYearLevels.some(
           (l) => l.value === currentYearCode
         );
         if (currentYearCode !== null && !isValueValid) {
-          this.subjectForm.get('year_level_code')?.setValue(null);
+          yearLevelControl?.setValue(null);
         }
       });
   }
@@ -156,7 +165,11 @@ export class SubjectsComponent implements OnInit {
     }
 
     const subjectData: SubjectInsert = this.subjectForm.value;
-
+    if (
+      subjectData.educational_stage === 'اخصائي صعوبات التعلم واطفال التوحد'
+    ) {
+      subjectData.year_level_code = 13;
+    }
     this.subjectService.addSubject(subjectData).subscribe({
       next: () => {
         this.notificationService.showAddSuccess('المادة الجديدة');

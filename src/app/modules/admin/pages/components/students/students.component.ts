@@ -436,7 +436,7 @@ export class StudentsComponent implements OnInit {
     this.isEditing = true;
     this.editingStudentId = student.student_id ?? null;
 
-    const studentData: Student = JSON.parse(JSON.stringify(student)); // Deep Copy!
+    const studentData: Student = JSON.parse(JSON.stringify(student));
 
     const feePlanObject =
       this.feePlans.find((p) => p.name === studentData.fee_plan) ||

@@ -16,15 +16,15 @@ export class TeacherService {
       title: ' مدرس العلوم الشرعية',
       subjects: [
         {
-          name: 'التربية الدينية',
+          name: 'العلوم الشرعية',
           teaching_scope: 'اعدادي - ثانوي ',
         },
-        { name: 'العلوم الشرعية', teaching_scope: 'جميع المراحل التعليمية ' },
+        { name: ' التربية الدينية', teaching_scope: 'جميع المراحل التعليمية ' },
       ],
       experience: 7,
       university: 'جامعة الأقصر',
       image: '../../../assets/images/teachers/mohamed-hussein.png',
-      desc: 'يركز على تنمية التفكير العلمي لدى الطلاب من خلال التجارب والأمثلة الواقعية، وتشغل حاليًا منصب منسقة العلوم في المنصة التعليمية.',
+      desc: '_',
     },
     {
       id: 2,
@@ -40,7 +40,7 @@ export class TeacherService {
       experience: 4,
       university: 'جامعة الأزهر',
       image: '../../../assets/images/teachers/mohamed-basher.png',
-      desc: 'طالب ماجستير قسم علم النفس التعليمي بكلية التربية جامعة الأزهر',
+      desc: '  معلم العلوم بمدرسة هبة النيل الدولية ومعلم الفيزياء بمدرسة زوتس للغات سابقا - ماجستير قسم علم النفس التعليمي بكلية التربية جامعة الأزهر  ',
     },
     {
       id: 3,
@@ -52,7 +52,7 @@ export class TeacherService {
           teaching_scope: 'للمراحل الابتدائية - الاعدادية - الثانوية',
         },
       ],
-      experience: 3,
+      experience: 4,
       university: 'جامعة الأقصر',
       image: '../../../assets/images/teachers/mahmoud-abdelmougod.png',
       desc: 'مدرس في مدرسة الاقالته الاعدادية المشتركة',
@@ -85,7 +85,7 @@ export class TeacherService {
       experience: 4,
       university: 'جامعة الأقصر',
       image: '../../../assets/images/teachers/omar-ebad.png',
-      desc: 'مدرس فس سنتر فيوتشر التعليمي',
+      desc: 'مدرس اللغة العربية وعلومها بمدرسة هبة النيل الدولية',
     },
     {
       id: 6,
@@ -97,26 +97,30 @@ export class TeacherService {
           teaching_scope: 'جميع المراحل التعليمية',
         },
       ],
-      experience: 7,
-      university: 'جامعة الأقصر',
+      experience: 6,
+      university: 'جامعة جنوب الوادي بقنا',
       image: '../../../assets/images/teachers/abo-bakr.png',
-      desc: 'تركز على تنمية التفكير العلمي لدى الطلاب من خلال التجارب والأمثلة الواقعية، وتشغل حاليًا منصب منسقة العلوم في المنصة التعليمية.',
+      desc: 'معلم مساعد بوزارة التربية والتعليم الفني  وحاصل على شهادة الماجستير',
     },
     {
       id: 7,
-      name: 'أ. احمد عبدالمطلب ',
-      title: 'اخصائي صعوبات التعلم ',
+      name: 'أ. احمد محمد عبدالمطلب ',
+      title: 'الدراسات الاجتماعية _ اخصائي صعوبات التعلم ',
       subjects: [
         {
           name: 'اخصائي صعوبات التعلم واطفال التوحد',
-          teaching_scope: 'جميع المراحل التعليمية',
+          teaching_scope: '  من عمر 5 الى 16 سنة ',
+        },
+        {
+          name: ' الدراسات الاجتماعية',
+          teaching_scope: ' جميع المراحل التعليمية ',
         },
       ],
 
-      experience: 7,
+      experience: 2,
       university: 'جامعة الأقصر',
       image: '../../../assets/images/teachers/ahmed-mohamed.png',
-      desc: 'تركز على تنمية التفكير العلمي لدى الطلاب من خلال التجارب والأمثلة الواقعية، وتشغل حاليًا منصب منسقة العلوم في المنصة التعليمية.',
+      desc: 'خبرة سنتين بمجال الصعوبات للتعلم ومدرس مساعد في وزارة التربية والتعليم .',
     },
   ];
 

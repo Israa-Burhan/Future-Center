@@ -26,7 +26,6 @@ export class SubjectService {
     const supabasePromise = supabase
       .from(this.SUBJECTS_TABLE)
       .select(columns)
-      .eq('is_deleted', false)
       .order('educational_stage', { ascending: true })
       .order('year_level_code', { ascending: true });
 

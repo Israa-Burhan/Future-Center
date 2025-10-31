@@ -38,6 +38,7 @@ const STAGE_SUBJECT_MAP: { [key: string]: string[] } = {
     'فرنسي',
     'علوم شرعية',
   ],
+  'اخصائي تنمية مهارات واطفال التوحد': [' تنمية المهارات و وصعوبات التعلم '],
 };
 
 const ALL_YEAR_LEVELS_DATA: { label: string; value: number; stage: string }[] =
@@ -64,6 +65,10 @@ export class AcademicDataService {
     { label: 'ابتدائي', value: 'ابتدائي' },
     { label: 'إعدادي', value: 'إعدادي' },
     { label: 'ثانوي', value: 'ثانوي' },
+    {
+      label: 'اخصائي تنمية مهارات واطفال التوحد',
+      value: 'اخصائي تنمية مهارات واطفال التوحد',
+    },
   ]);
 
   getSubjectNames(stage: string | null): Observable<string[]> {
@@ -77,7 +82,13 @@ export class AcademicDataService {
     if (!stage) {
       return of([]);
     }
-
+    if (stage === 'اخصائي تنمية مهارات واطفال التوحد') {
+      const ageRangeItem: SelectItem = {
+        label: 'من عمر 5 إلى 16 سنة',
+        value: 13,
+      };
+      return of([ageRangeItem]);
+    }
     const filteredLevels: SelectItem[] = ALL_YEAR_LEVELS_DATA.filter(
       (item) => item.stage === stage
     ).map(
