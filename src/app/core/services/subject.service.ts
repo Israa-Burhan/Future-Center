@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { supabase } from './supabase.client';
-import { from, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { from, Observable, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 export interface Subject {
   subject_id: string;
@@ -69,4 +69,27 @@ export class SubjectService {
 
     return from(promise);
   }
+
+  // deleteSubject(subjectId: string | null | undefined): Observable<any> {
+  //   if (!subjectId) {
+  //     return throwError(() => new Error('معرف المادة غير صالح.'));
+  //   }
+
+  //   // حذف المادة فقط، ولن يحاول Supabase استرجاع الصفوف المرتبطة
+  //   const promise = supabase
+  //     .from('subjects')
+  //     .delete()
+  //     .eq('subject_id', subjectId); // لا نستخدم select()
+
+  //   return from(promise).pipe(
+  //     map((response) => {
+  //       if (response.error) throw new Error(response.error.message);
+  //       return { success: true };
+  //     }),
+  //     catchError((err) => {
+  //       console.error('Final Delete Error:', err);
+  //       return throwError(() => err);
+  //     })
+  //   );
+  // }
 }

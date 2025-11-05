@@ -441,11 +441,11 @@ export class StudentPriceSummaryComponent implements OnInit, OnDestroy {
           if (res && res.length > 0) {
             if (this.isEditMode) {
               this.notificationService.showSuccess(
-                'تم تحديث الدفعات لجميع المواد بنجاح.'
+                'تم تعديل دفعة الطالب بنجاح.'
               );
             } else {
               this.notificationService.showSuccess(
-                'تم تسجيل الدفعات لجميع المواد بنجاح.'
+                'تم تسجيل دفعة الطالب بنجاح.'
               );
             }
 

@@ -27,7 +27,7 @@ import { ValidationMessagePage } from '../../../../shared/components/validation-
 import { RxwebValidators } from '@rxweb/reactive-form-validators';
 import { NotificationService } from '../../../../../core/services/notification.service';
 import { AcademicDataService } from '../../../../../core/services/academic-data.service';
-import { ShowForRolesDirective } from '../../../../../core/directives/show-for-roles.directive';
+
 import { AuthService } from '../../../../auth/services/auth.service';
 
 @Component({
