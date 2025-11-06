@@ -24,6 +24,17 @@ export const adminRoutes: Routes = [
         },
       },
       {
+        path: 'subjects',
+        loadComponent: () =>
+          import('./pages/components/subjects/subjects.component').then(
+            (m) => m.SubjectsComponent
+          ),
+        data: {
+          roles: ['admin', 'staff'],
+          nav: { label: 'إضافة مادة', icon: 'pi pi-book', order: 2 },
+        },
+      },
+      {
         path: 'students',
         loadComponent: () =>
           import('./pages/components/students/students.component').then(
@@ -31,18 +42,7 @@ export const adminRoutes: Routes = [
           ),
         data: {
           roles: ['admin', 'staff'],
-          nav: { label: 'إضافة طالب', icon: 'pi pi-user-plus', order: 2 },
-        },
-      },
-      {
-        path: 'teachers',
-        loadComponent: () =>
-          import('./pages/components/teachers/teachers.component').then(
-            (m) => m.TeachersComponent
-          ),
-        data: {
-          roles: ['admin'],
-          nav: { label: 'المعلمين', icon: 'pi pi-users', order: 3 },
+          nav: { label: 'إضافة طالب', icon: 'pi pi-user-plus', order: 3 },
         },
       },
       {
@@ -57,17 +57,6 @@ export const adminRoutes: Routes = [
         },
       },
       {
-        path: 'enrollments',
-        loadComponent: () =>
-          import('./pages/components/enrollments/enrollments.component').then(
-            (m) => m.EnrollmentsComponent
-          ),
-        data: {
-          roles: ['admin', 'staff'],
-          nav: { label: 'السجلات', icon: 'pi pi-file', order: 5 },
-        },
-      },
-      {
         path: 'attendance',
         loadComponent: () =>
           import('./pages/components/attendance/attendance.component').then(
@@ -75,7 +64,18 @@ export const adminRoutes: Routes = [
           ),
         data: {
           roles: ['admin', 'staff'],
-          nav: { label: 'الحضور والغياب', icon: 'pi pi-file-check', order: 6 },
+          nav: { label: 'الحضور والغياب', icon: 'pi pi-file-check', order: 5 },
+        },
+      },
+      {
+        path: 'enrollments',
+        loadComponent: () =>
+          import('./pages/components/enrollments/enrollments.component').then(
+            (m) => m.EnrollmentsComponent
+          ),
+        data: {
+          roles: ['admin', 'staff'],
+          nav: { label: 'السجلات', icon: 'pi pi-file', order: 6 },
         },
       },
       {
@@ -86,9 +86,21 @@ export const adminRoutes: Routes = [
           ),
         data: {
           roles: ['admin', 'staff'],
-          nav: { label: 'المدفوعات', icon: 'pi pi-dollar', order: 7 },
+          nav: { label: 'مدفوعات المعلمين', icon: 'pi pi-dollar', order: 7 },
         },
       },
+      {
+        path: 'student-price-summary',
+        loadComponent: () =>
+          import(
+            './pages/components/student-price-summary/student-price-summary.component'
+          ).then((m) => m.StudentPriceSummaryComponent),
+        data: {
+          roles: ['admin', 'staff'],
+          nav: { label: 'مدفوعات الطلاب', icon: 'pi pi-dollar', order: 8 },
+        },
+      },
+
       {
         path: 'expenses',
         loadComponent: () =>
@@ -97,7 +109,7 @@ export const adminRoutes: Routes = [
           ),
         data: {
           roles: ['admin'],
-          nav: { label: 'المصروفات', icon: 'pi pi-credit-card', order: 8 },
+          nav: { label: 'المصروفات', icon: 'pi pi-credit-card', order: 9 },
         },
       },
       {
@@ -108,7 +120,7 @@ export const adminRoutes: Routes = [
           ),
         data: {
           roles: ['admin', 'staff'],
-          nav: { label: 'التقارير', icon: 'pi pi-chart-bar', order: 9 },
+          nav: { label: 'التقارير', icon: 'pi pi-chart-bar', order: 10 },
         },
       },
       {
@@ -119,7 +131,7 @@ export const adminRoutes: Routes = [
           ),
         data: {
           roles: ['admin', 'staff'],
-          nav: { label: 'الرسائل', icon: 'pi pi-envelope', order: 10 },
+          nav: { label: 'الرسائل', icon: 'pi pi-envelope', order: 11 },
         },
       },
       // {
@@ -133,28 +145,17 @@ export const adminRoutes: Routes = [
       //     nav: { label: 'الإعدادات', icon: 'pi pi-cog', order: 11 },
       //   },
       // },
-      {
-        path: 'subjects',
-        loadComponent: () =>
-          import('./pages/components/subjects/subjects.component').then(
-            (m) => m.SubjectsComponent
-          ),
-        data: {
-          roles: ['admin', 'staff'],
-          nav: { label: 'إضافة مادة', icon: 'pi pi-book', order: 12 },
-        },
-      },
-      {
-        path: 'student-price-summary',
-        loadComponent: () =>
-          import(
-            './pages/components/student-price-summary/student-price-summary.component'
-          ).then((m) => m.StudentPriceSummaryComponent),
-        data: {
-          roles: ['admin', 'staff'],
-          nav: { label: 'اسعار الدورات للطلاب', icon: 'pi pi-book', order: 13 },
-        },
-      },
+      // {
+      //   path: 'teachers',
+      //   loadComponent: () =>
+      //     import('./pages/components/teachers/teachers.component').then(
+      //       (m) => m.TeachersComponent
+      //     ),
+      //   data: {
+      //     roles: ['admin'],
+      //     nav: { label: 'المعلمين', icon: 'pi pi-users', order: 3 },
+      //   },
+      // },
     ],
   },
 ];

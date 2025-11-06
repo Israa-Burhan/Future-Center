@@ -78,6 +78,7 @@ export class StudentsComponent implements OnInit {
 
   studentForm!: FormGroup;
   students$!: Observable<Student[]>;
+
   isEditing: boolean = false;
   editingStudentId: string | null = null;
   stages$!: Observable<SelectItem[]>;
@@ -87,7 +88,7 @@ export class StudentsComponent implements OnInit {
   availableSubjects$: Observable<Subject[]> =
     this.subjectsSource.asObservable();
   subjectIdToNameMap: Map<string, string> = new Map();
-
+  globalFilterValue: string = '';
   feePlans: FeePlanOption[] = [
     { name: 'رسوم كاملة (لا يوجد خصم)', discount: 0 },
     { name: 'إعفاء كامل', discount: 100 },
@@ -102,9 +103,10 @@ export class StudentsComponent implements OnInit {
   constructor(private authService: AuthService) {}
 
   async ngOnInit(): Promise<void> {
+    this.initForm();
     this.currentRole = await this.authService.getRole();
     this.stages$ = this.academicDataService.stages$;
-    this.initForm();
+
     this.setupAcademicFiltering();
     this.setupSubjectFiltering();
     this.setupFeePlanLogic();

@@ -1,7 +1,7 @@
 <div class="subjects">
   <div class="container">
     <div class="text-center mb-5">
-      <h2 class="font-bold text-900">لوحة تحكم إضافة أسعار المواد الدراسية</h2>
+      <h2 class="font-bold text-900">لوحة تحكم إضافة المواد الدراسية</h2>
     </div>
 
     <p-card
@@ -101,7 +101,10 @@
     </p-card>
 
     <p-table
+      #ft
       [value]="(subjects$ | async) ?? []"
+      dataKey="subject_id"
+      [globalFilterFields]="['subject_name']"
       [paginator]="true"
       [rows]="10"
       sortMode="multiple"
@@ -110,7 +113,25 @@
       styleClass="p-datatable-gridlines p-datatable-striped py-5"
     >
       <ng-template pTemplate="caption">
-        <h3 class="font-bold text-center text-xl">قائمة المواد الحالية</h3>
+        <h3 class="font-bold text-center text-xl mb-3">قائمة المواد المسجلة</h3>
+
+        <div class="flex flex-column sm:flex-row align-items-center gap-3">
+          <span class="p-input-icon-left mr-3">
+            <input
+              pInputText
+              type="text"
+              #searchInput
+              [(ngModel)]="globalFilterValue"
+              (input)="ft.filterGlobal(searchInput.value, 'contains')"
+              placeholder="البحث باسم المادة..."
+              class="p-inputtext-sm"
+            />
+          </span>
+          <span class="text-lg">
+            عدد المواد المضافة :
+            <strong>{{ subjects.length }}</strong>
+          </span>
+        </div>
       </ng-template>
 
       <ng-template pTemplate="header">
@@ -124,7 +145,7 @@
           </th>
 
           <th class="text-center" pSortableColumn="base_price">
-            السعر <p-sortIcon field="base_price" />
+            السعر الأساسي <p-sortIcon field="base_price" />
           </th>
 
           <th class="text-center">الإجراءات</th>
@@ -189,7 +210,7 @@
                 class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
               >
                 <p class="row_data mb-0">
-                  {{ subject.base_price | currency : "EGP" }}
+                  {{ subject.base_price | number : "1.2-2" }} ج.م
                 </p>
               </div>
             </div>

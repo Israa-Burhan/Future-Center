@@ -208,7 +208,10 @@
     </p-card>
 
     <p-table
+      #ft
       [value]="(students$ | async) ?? []"
+      dataKey="student_id"
+      [globalFilterFields]="['full_name']"
       [paginator]="true"
       [rows]="10"
       sortMode="multiple"
@@ -217,7 +220,27 @@
       styleClass="p-datatable-gridlines p-datatable-striped py-5"
     >
       <ng-template pTemplate="caption">
-        <h3 class="font-bold text-center text-xl">قائمة الطلاب الحاليين</h3>
+        <h3 class="font-bold text-center text-xl mb-3">
+          قائمة الطلاب الحاليين
+        </h3>
+
+        <div class="flex flex-column sm:flex-row align-items-center gap-3">
+          <span class="p-input-icon-left mr-3">
+            <input
+              pInputText
+              type="text"
+              #searchInput
+              [(ngModel)]="globalFilterValue"
+              (input)="ft.filterGlobal(searchInput.value, 'contains')"
+              placeholder="البحث باسم الطالب..."
+              class="p-inputtext-sm"
+            />
+          </span>
+          <span class="text-lg">
+            عدد الطلاب :
+            <strong>{{ (students$ | async)?.length }}</strong>
+          </span>
+        </div>
       </ng-template>
 
       <ng-template pTemplate="header">
@@ -364,7 +387,7 @@
               <div
                 class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max d-flex flex align-items-center gap-1 flex-row flex-wrap"
               >
-                <p class="row_data mb-0">{{ student.discount_percent }}</p>
+                <p class="row_data mb-0">{{ student.discount_percent }} %</p>
               </div>
             </div>
           </td>

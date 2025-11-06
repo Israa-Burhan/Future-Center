@@ -59,17 +59,18 @@ export class SubjectsComponent implements OnInit {
   private academicDataService = inject(AcademicDataService);
   subjectForm!: FormGroup;
   subjects$!: Observable<(Subject & { created_at: Date })[]>;
-
+  subjects: (Subject & { created_at: Date })[] = [];
   stages: string[] = [];
   availableSubjectNames: string[] = [];
   availableYearLevels: SelectItem[] = [];
   isEditing: boolean = false;
   editingSubjectId: string | null = null;
+  globalFilterValue: string = '';
   constructor(private authService: AuthService) {}
 
   async ngOnInit(): Promise<void> {
-    this.currentRole = await this.authService.getRole();
     this.initForm();
+    this.currentRole = await this.authService.getRole();
     this.loadSubjects();
     this.academicDataService
       .getAllStages()
@@ -96,7 +97,31 @@ export class SubjectsComponent implements OnInit {
   }
 
   loadSubjects(): void {
-    this.subjects$ = this.subjectService.getAllSubjects();
+    const subjectsObservable = this.subjectService.getAllSubjects();
+    this.subjects$ = subjectsObservable;
+
+    subjectsObservable.pipe(take(1)).subscribe((data) => {
+      this.subjects = data;
+    });
+  }
+
+  isDuplicateSubject(
+    stage: string,
+    name: string,
+    yearCode: number | null
+  ): boolean {
+    const isDuplicate = this.subjects.some((subject) => {
+      const isSameStage = subject.educational_stage === stage;
+      const isSameName = subject.subject_name === name;
+      const isSameYear = subject.year_level_code === yearCode;
+
+      const isEditingSameSubject =
+        this.isEditing && subject.subject_id === this.editingSubjectId;
+
+      return isSameStage && isSameName && isSameYear && !isEditingSameSubject;
+    });
+
+    return isDuplicate;
   }
 
   updateAvailableFields(stage: string): void {
@@ -175,6 +200,21 @@ export class SubjectsComponent implements OnInit {
     ) {
       subjectData.year_level_code = 13;
     }
+
+    if (
+      this.isDuplicateSubject(
+        subjectData.educational_stage!,
+        subjectData.subject_name!,
+        subjectData.year_level_code
+      )
+    ) {
+      this.notificationService.showError(
+        'هذه المادة مضافة مسبقًا لنفس المرحلة والصف.',
+        'مادة مكررة'
+      );
+      return;
+    }
+
     this.subjectService.addSubject(subjectData).subscribe({
       next: () => {
         this.notificationService.showAddSuccess('المادة الجديدة');
