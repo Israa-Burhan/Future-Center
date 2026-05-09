@@ -394,10 +394,9 @@ export class StudentPriceSummaryComponent implements OnInit, OnDestroy {
     const formValue = this.paymentDialogForm.value;
 
     const paymentMonthDate = new Date(student.payment_month);
-
-    const utcFirstDayOfMonth = new Date(
-      Date.UTC(paymentMonthDate.getFullYear(), paymentMonthDate.getMonth(), 1)
-    );
+    const monthYearKey = `${paymentMonthDate.getFullYear()}-${String(
+      paymentMonthDate.getMonth() + 1
+    ).padStart(2, '0')}-01`;
 
     const paymentsData: PaymentInsertUpdate[] = student.subscribed_subjects.map(
       (subject) => {
@@ -407,7 +406,7 @@ export class StudentPriceSummaryComponent implements OnInit, OnDestroy {
         return {
           student_id: student.student_id,
 
-          month_year: utcFirstDayOfMonth.toISOString(),
+          month_year: monthYearKey,
 
           subject_id: subject.subject_id,
           base_price: subject.base_price,

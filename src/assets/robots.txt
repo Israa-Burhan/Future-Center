@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# لا تُفهرس لوحة التحكم أو صفحة الدخول
+Disallow: /admin/
+Disallow: /staff/
+Disallow: /login
+
+# غيّر النطاق ليطابق seo.config.ts (SITE_ORIGIN)
+Sitemap: https://future-center.example/sitemap.xml

@@ -1,0 +1,95 @@
+@import "../../../../../../assets/styles/scss/mixins";
+@import "../../../../../../assets/styles/helpers/table";
+
+.teachers {
+  h2 {
+    font-size: var(--h2);
+    @include responsive(sm) {
+      font-size: var(--h4);
+    }
+  }
+
+  .text-600 {
+    color: #6b7280;
+    max-width: 42rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  input,
+  textarea {
+    padding: 12px;
+    box-shadow: none;
+    border-radius: 8px;
+  }
+
+  .subjects-editor {
+    background: #f9fafb;
+  }
+
+  .subject-row {
+    background: var(--surface-card, #fff);
+  }
+
+  .teacher-photo-preview {
+    max-height: 240px;
+    object-fit: contain;
+    width: auto;
+  }
+
+  .photo-upload {
+    padding: 0.75rem 0;
+  }
+}
+
+::ng-deep {
+  .teachers {
+    .p-card-body {
+      padding: 16px !important;
+    }
+
+    .p-card {
+      box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.1);
+      border-radius: 16px;
+      margin-bottom: 0;
+    }
+
+    .p-card .p-card-title {
+      font-weight: var(--font-weight-semibold, 600);
+    }
+
+    .p-fluid .p-inputnumber .p-inputnumber-input {
+      padding: 12px;
+      box-shadow: none;
+      border-radius: 12px;
+    }
+
+    .p-inputtextarea {
+      border-radius: 8px;
+      box-shadow: none;
+    }
+
+    .p-divider {
+      margin: 0 0 1rem;
+    }
+
+    .p-dropdown {
+      padding: 12px;
+      align-items: center;
+      box-shadow: none;
+      border-radius: 12px;
+      width: 100%;
+      .p-dropdown-trigger {
+        justify-content: flex-end;
+      }
+      .p-dropdown-clear-icon {
+        left: 3rem;
+        right: unset;
+      }
+      .p-dropdown-panel .p-dropdown-items .p-dropdown-item,
+      .p-dropdown-empty-message {
+        padding: 10px 5px;
+      }
+    }
+  }
+}

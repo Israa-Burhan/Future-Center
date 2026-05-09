@@ -28,7 +28,9 @@ export class TeacherPaymentService {
   savePayment(paymentData: PaymentInsertUpdate): Observable<TeacherPayment> {
     const promise = supabase
       .from(this.PAYMENTS_TABLE)
-      .upsert([paymentData])
+      .upsert([paymentData], {
+        onConflict: 'teacher_id,month_year',
+      })
       .select();
 
     return from(promise).pipe(

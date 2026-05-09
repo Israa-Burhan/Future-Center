@@ -46,6 +46,17 @@ export const adminRoutes: Routes = [
         },
       },
       {
+        path: 'teachers',
+        loadComponent: () =>
+          import('./pages/components/teachers/teachers.component').then(
+            (m) => m.TeachersComponent
+          ),
+        data: {
+          roles: ['admin', 'staff'],
+          nav: { label: 'المعلمين', icon: 'pi pi-users', order: 4 },
+        },
+      },
+      {
         path: 'classes',
         loadComponent: () =>
           import('./pages/components/classes/classes.component').then(
@@ -53,7 +64,7 @@ export const adminRoutes: Routes = [
           ),
         data: {
           roles: ['admin', 'staff'],
-          nav: { label: 'جدولة الحصص', icon: 'pi pi-book', order: 4 },
+          nav: { label: 'جدولة الحصص', icon: 'pi pi-book', order: 5 },
         },
       },
       {
@@ -64,7 +75,7 @@ export const adminRoutes: Routes = [
           ),
         data: {
           roles: ['admin', 'staff'],
-          nav: { label: 'الحضور والغياب', icon: 'pi pi-file-check', order: 5 },
+          nav: { label: 'الحضور والغياب', icon: 'pi pi-file-check', order: 6 },
         },
       },
       {
@@ -75,7 +86,7 @@ export const adminRoutes: Routes = [
           ),
         data: {
           roles: ['admin', 'staff'],
-          nav: { label: 'السجلات', icon: 'pi pi-file', order: 6 },
+          nav: { label: 'السجلات', icon: 'pi pi-file', order: 7 },
         },
       },
       {
@@ -86,7 +97,7 @@ export const adminRoutes: Routes = [
           ),
         data: {
           roles: ['admin', 'staff'],
-          nav: { label: 'مدفوعات المعلمين', icon: 'pi pi-dollar', order: 7 },
+          nav: { label: 'مدفوعات المعلمين', icon: 'pi pi-dollar', order: 8 },
         },
       },
       {
@@ -97,7 +108,7 @@ export const adminRoutes: Routes = [
           ).then((m) => m.StudentPriceSummaryComponent),
         data: {
           roles: ['admin', 'staff'],
-          nav: { label: 'مدفوعات الطلاب', icon: 'pi pi-dollar', order: 8 },
+          nav: { label: 'مدفوعات الطلاب', icon: 'pi pi-dollar', order: 9 },
         },
       },
 
@@ -109,7 +120,7 @@ export const adminRoutes: Routes = [
           ),
         data: {
           roles: ['admin'],
-          nav: { label: 'المصروفات', icon: 'pi pi-credit-card', order: 9 },
+          nav: { label: 'المصروفات', icon: 'pi pi-credit-card', order: 10 },
         },
       },
       {
@@ -120,7 +131,7 @@ export const adminRoutes: Routes = [
           ),
         data: {
           roles: ['admin', 'staff'],
-          nav: { label: 'التقارير', icon: 'pi pi-chart-bar', order: 10 },
+          nav: { label: 'التقارير', icon: 'pi pi-chart-bar', order: 11 },
         },
       },
       {
@@ -131,7 +142,7 @@ export const adminRoutes: Routes = [
           ),
         data: {
           roles: ['admin', 'staff'],
-          nav: { label: 'الرسائل', icon: 'pi pi-envelope', order: 11 },
+          nav: { label: 'الرسائل', icon: 'pi pi-envelope', order: 12 },
         },
       },
       // {
@@ -143,17 +154,6 @@ export const adminRoutes: Routes = [
       //   data: {
       //     roles: ['admin'],
       //     nav: { label: 'الإعدادات', icon: 'pi pi-cog', order: 11 },
-      //   },
-      // },
-      // {
-      //   path: 'teachers',
-      //   loadComponent: () =>
-      //     import('./pages/components/teachers/teachers.component').then(
-      //       (m) => m.TeachersComponent
-      //     ),
-      //   data: {
-      //     roles: ['admin'],
-      //     nav: { label: 'المعلمين', icon: 'pi pi-users', order: 3 },
       //   },
       // },
     ],

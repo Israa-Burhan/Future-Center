@@ -272,10 +272,7 @@ export class StudentService {
                             `
             )
             .eq('year_level', selectedYearLevel)
-            .contains(
-              'subscribed_subjects',
-              JSON.stringify([selectedSubjectId])
-            );
+            .contains('subscribed_subjects', [selectedSubjectId]);
 
           return from(studentsPromise).pipe(
             map((response: any) => {

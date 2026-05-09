@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, OnInit, PLATFORM_ID, inject } from '@angular/core';
+import { Router, RouterOutlet } from '@angular/router';
 import { SpinnerComponent } from './modules/shared/components/spinner/spinner.component';
+import { SeoService } from './core/services/seo.service';
 import { supabase } from './core/services/supabase.client';
 
 @Component({
@@ -12,11 +13,20 @@ import { supabase } from './core/services/supabase.client';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly router = inject(Router);
+  private readonly seo = inject(SeoService);
+
   title = 'Future_Center';
   loading = true;
 
+  constructor() {
+    this.seo.attachRouter(this.router);
+  }
+
   ngOnInit() {
-    this.initSessionAndRole();
+    this.seo.applyFromRouter(this.router);
+    void this.initSessionAndRole();
   }
 
   private async initSessionAndRole() {
@@ -25,13 +35,15 @@ export class AppComponent implements OnInit {
     } = await supabase.auth.getSession();
     try {
       const uid = session?.user.id;
-      if (uid) {
+      if (uid && isPlatformBrowser(this.platformId)) {
         const { data } = await supabase
           .from('profiles')
           .select('role')
           .eq('id', uid)
           .single();
-        if (data?.role) localStorage.setItem('sb_role', data.role);
+        if (data?.role) {
+          localStorage.setItem('sb_role', data.role);
+        }
       }
     } catch (e) {
       console.error('Error caching role on app init:', e);

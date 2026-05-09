@@ -2,6 +2,29 @@ export interface SubjectDetail {
   name: string;
   teaching_scope: string;
 }
+
+/** Row shape in public.teachers (Supabase). */
+export interface TeacherRecord {
+  teacher_id: number;
+  full_name: string;
+  phone: string | null;
+  job_title: string | null;
+  subjects: SubjectDetail[];
+  experience: number;
+  university: string | null;
+  image: string | null;
+  description: string | null;
+  notes: string | null;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export type TeacherInsert = Omit<
+  TeacherRecord,
+  'teacher_id' | 'created_at' | 'updated_at'
+>;
+
+/** UI / legacy shape used across public site, classes, payments. */
 export interface Teacher {
   id: number;
   name: string;

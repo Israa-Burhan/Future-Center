@@ -1,34 +1,175 @@
-<div class="grid">
-  <div class="col-12 md:col-6 lg:col-4 xl:col-3" *ngFor="let card of statCards">
-    <p-card class="stat-card">
-      <div class="flex align-items-center justify-content-between">
-        <div class="flex align-items-center gap-3">
-          <span
-            class="stat-icon flex align-items-center justify-content-center"
-          >
-            <i [class]="card.icon"></i>
-          </span>
-          <div>
-            <p class="m-0 text-600">{{ card.title }}</p>
-            <h2 class="m-0 font-bold text-900">{{ card.value }}</h2>
-          </div>
-        </div>
+<section class="dashboard-home py-4">
+  <div class="container">
+    <div class="topbar grid align-items-center mb-4">
+      <div class="col-12">
+        <h2 class="m-0">الرئيسية</h2>
+        <p class="m-0 mt-2 text-600">نظرة عامة على أرقام السنتر</p>
+      </div>
+    </div>
+
+    <app-spinner
+      *ngIf="loading"
+      [fullscreen]="false"
+      text="جاري تحميل الأرقام..."
+    ></app-spinner>
+
+    <ng-container *ngIf="!loading">
+      <div class="grid">
         <div
-          class="flex align-items-center gap-2 font-bold"
-          [ngClass]="{
-            'text-green-600': card.deltaClass === 'up',
-            'text-red-500': card.deltaClass === 'down'
-          }"
+          class="col-12 md:col-6 lg:col-4 xl:col-3"
+          *ngFor="let card of statCards"
         >
-          <i
-            class="pi"
-            [ngClass]="
-              card.deltaClass === 'up' ? 'pi-arrow-up' : 'pi-arrow-down'
-            "
-          ></i>
-          <span>{{ card.delta }}</span>
+          <p-card styleClass="stat-card">
+            <div class="flex align-items-center justify-content-between gap-3">
+              <div class="flex align-items-center gap-3 min-w-0">
+                <span
+                  class="stat-icon flex align-items-center justify-content-center flex-shrink-0"
+                >
+                  <i [class]="card.icon" aria-hidden="true"></i>
+                </span>
+                <div class="min-w-0">
+                  <p class="m-0 text-600">{{ card.title }}</p>
+                  <h2 class="m-0 font-bold text-900">{{ card.value }}</h2>
+                </div>
+              </div>
+              <div
+                *ngIf="card.delta"
+                class="flex align-items-center gap-2 font-bold flex-shrink-0 text-right"
+                [ngClass]="{
+                  'text-green-600': card.deltaClass === 'up',
+                  'text-red-500': card.deltaClass === 'down'
+                }"
+              >
+                <i
+                  class="pi"
+                  [ngClass]="
+                    card.deltaClass === 'up' ? 'pi-arrow-up' : 'pi-arrow-down'
+                  "
+                  aria-hidden="true"
+                ></i>
+                <span class="white-space-nowrap">{{ card.delta }}</span>
+              </div>
+            </div>
+          </p-card>
         </div>
       </div>
-    </p-card>
+
+      <div class="section-head mt-5 mb-3">
+        <h3 class="m-0 font-bold text-900">تفاصيل إضافية</h3>
+        <p class="m-0 mt-2 text-600 text-sm">
+          أعداد تكمّل الصورة دون تكرار البطاقات الرئيسية.
+        </p>
+      </div>
+
+      <div class="grid">
+        <div
+          class="col-12 md:col-4"
+          *ngFor="let card of detailCards"
+        >
+          <p-card styleClass="stat-card stat-card-secondary">
+            <div class="flex align-items-center gap-3">
+              <span
+                class="stat-icon stat-icon-sm flex align-items-center justify-content-center flex-shrink-0"
+              >
+                <i [class]="card.icon" aria-hidden="true"></i>
+              </span>
+              <div class="min-w-0">
+                <p class="m-0 text-600 text-sm">{{ card.title }}</p>
+                <p class="m-0 font-bold text-900 text-xl">{{ card.value }}</p>
+              </div>
+            </div>
+          </p-card>
+        </div>
+      </div>
+
+      <div class="section-head mt-5 mb-3">
+        <h3 class="m-0 font-bold text-900">اتجاه آخر 6 أشهر</h3>
+        <p class="m-0 mt-2 text-600 text-sm">
+          تحصيلات الطلاب المسجّلة كـ<strong>مدفوعة</strong> لكل شهر مقابل عدد
+          الطلاب الذين تم إنشاء سجلهم في ذلك الشهر.
+        </p>
+      </div>
+
+      <p-card styleClass="trend-card mb-4">
+        <div class="overflow-x-auto">
+          <table class="trend-table w-full">
+            <thead>
+              <tr>
+                <th scope="col">الشهر</th>
+                <th scope="col">تحصيلات مدفوعة</th>
+                <th scope="col">طلاب جدد (تسجيل)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of monthlyTrend">
+                <td class="font-semibold white-space-nowrap">{{ row.label }}</td>
+                <td>
+                  <div class="trend-cell">
+                    <div
+                      class="trend-bar-bg"
+                      aria-hidden="true"
+                    >
+                      <div
+                        class="trend-bar-fill trend-bar-fill--revenue"
+                        [style.width.%]="revenueBarPercent(row)"
+                      ></div>
+                    </div>
+                    <span class="trend-value">
+                      {{ row.revenue | number : "1.0-0" }} ج.م
+                    </span>
+                  </div>
+                </td>
+                <td>
+                  <div class="trend-cell">
+                    <div
+                      class="trend-bar-bg"
+                      aria-hidden="true"
+                    >
+                      <div
+                        class="trend-bar-fill trend-bar-fill--students"
+                        [style.width.%]="studentsBarPercent(row)"
+                      ></div>
+                    </div>
+                    <span class="trend-value">
+                      {{ row.newStudents | number : "1.0-0" }}
+                    </span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p *ngIf="monthlyTrend.length === 0" class="m-0 text-600 text-sm text-center py-3">
+          لا توجد بيانات كافية لعرض الاتجاه.
+        </p>
+      </p-card>
+
+      <div class="section-head mt-5 mb-3">
+        <h3 class="m-0 font-bold text-900">اختصارات سريعة</h3>
+        <p class="m-0 mt-2 text-600 text-sm">
+          انتقل مباشرة إلى أكثر الصفحات استخدامًا.
+        </p>
+      </div>
+
+      <div class="grid quick-links">
+        <div
+          class="col-12 sm:col-6 md:col-4 lg:col-3"
+          *ngFor="let q of quickLinks"
+        >
+          <a
+            [routerLink]="q.route"
+            class="quick-link flex align-items-center gap-3 p-3 border-round-lg"
+          >
+            <span
+              class="quick-link__icon flex align-items-center justify-content-center flex-shrink-0"
+            >
+              <i [class]="q.icon" aria-hidden="true"></i>
+            </span>
+            <span class="font-semibold text-900">{{ q.label }}</span>
+            <i class="pi pi-angle-left mr-auto text-600 quick-link__chevron" aria-hidden="true"></i>
+          </a>
+        </div>
+      </div>
+    </ng-container>
   </div>
-</div>
+</section>

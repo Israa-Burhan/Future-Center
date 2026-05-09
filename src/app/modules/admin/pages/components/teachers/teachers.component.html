@@ -1,1 +1,413 @@
-<p>teachers works!</p>
+<div class="teachers">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="font-bold text-900">لوحة تحكم المعلمين</h2>
+      <p class="mt-2 mb-0 text-600 line-height-3">
+        إضافة وتعديل بيانات المعلمين والمواد التي يدرّسها — تُستخدم في جدولة الحصص والموقع العام.
+      </p>
+    </div>
+
+    <p-card [header]="isEditing ? 'تعديل معلم' : 'إضافة معلم جديد'">
+      <form
+        [formGroup]="teacherForm"
+        (ngSubmit)="saveTeacher()"
+        class="p-fluid grid formgrid"
+      >
+        <div class="field col-12 md:col-6">
+          <label for="full_name"
+            >الاسم الكامل <span class="text-red-500">*</span></label
+          >
+          <input
+            id="full_name"
+            type="text"
+            pInputText
+            formControlName="full_name"
+            class="w-full"
+            placeholder="مثال: أ. محمد أحمد"
+          />
+          <app-validation-message
+            [control]="teacherForm.get('full_name')"
+          ></app-validation-message>
+        </div>
+
+        <div class="field col-12 md:col-6">
+          <label for="phone">رقم الهاتف</label>
+          <input
+            id="phone"
+            type="text"
+            pInputText
+            formControlName="phone"
+            class="w-full"
+          />
+        </div>
+
+        <div class="field col-12 md:col-6">
+          <label for="job_title_option"
+            >المسمّى الوظيفي / التخصص <span class="text-red-500">*</span></label
+          >
+          <p-dropdown
+            id="job_title_option"
+            formControlName="job_title_option"
+            [options]="jobTitleOptions"
+            placeholder="اختر المسمّى الوظيفي"
+            [showClear]="true"
+            styleClass="w-full"
+            [filter]="true"
+            filterBy="label"
+            appendTo="body"
+          ></p-dropdown>
+          <app-validation-message
+            [control]="teacherForm.get('job_title_option')"
+          ></app-validation-message>
+        </div>
+
+        <div
+          *ngIf="teacherForm.get('job_title_option')?.value === jobTitleOtherValue"
+          class="field col-12 md:col-6"
+        >
+          <label for="job_title_custom">مسمّى مخصّص</label>
+          <input
+            id="job_title_custom"
+            type="text"
+            pInputText
+            formControlName="job_title_custom"
+            class="w-full"
+            placeholder="اكتب المسمّى كما يظهر في العقد أو الشهادة"
+          />
+          <app-validation-message
+            [control]="teacherForm.get('job_title_custom')"
+          ></app-validation-message>
+        </div>
+
+        <div class="field col-12 md:col-6">
+          <label for="experience">سنوات الخبرة</label>
+          <p-inputNumber
+            id="experience"
+            formControlName="experience"
+            [min]="0"
+            [showButtons]="true"
+            class="w-full"
+          ></p-inputNumber>
+        </div>
+
+        <div class="field col-12 md:col-6">
+          <label for="university_option">الجامعة / المؤهل</label>
+          <p-dropdown
+            id="university_option"
+            formControlName="university_option"
+            [options]="universityOptions"
+            placeholder="اختر الجامعة أو المؤهل"
+            [showClear]="true"
+            styleClass="w-full"
+            [filter]="true"
+            filterBy="label"
+            appendTo="body"
+          ></p-dropdown>
+        </div>
+
+        <div
+          *ngIf="teacherForm.get('university_option')?.value === universityOtherValue"
+          class="field col-12 md:col-6"
+        >
+          <label for="university_custom">جامعة أو مؤهل (إدخال يدوي)</label>
+          <input
+            id="university_custom"
+            type="text"
+            pInputText
+            formControlName="university_custom"
+            class="w-full"
+          />
+        </div>
+
+        <div class="field col-12 md:col-6">
+          <label>صورة المعلم (للموقع العام)</label>
+          <input
+            #photoInput
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            class="hidden"
+            (change)="onPhotoChosen($event)"
+            aria-hidden="true"
+          />
+          <div class="photo-upload flex flex-column gap-2">
+            <div class="flex flex-wrap gap-2 align-items-center">
+              <button
+                type="button"
+                pButton
+                label="اختيار صورة"
+                icon="pi pi-upload"
+                class="p-button-outlined"
+                (click)="photoInput.click()"
+              ></button>
+              <button
+                *ngIf="pendingImageFile || displayImageSrc"
+                type="button"
+                pButton
+                label="إزالة الصورة"
+                icon="pi pi-times"
+                class="p-button-text p-button-danger"
+                (click)="clearPhoto()"
+              ></button>
+            </div>
+            <small class="text-600 line-height-3">
+              يتم رفع الصورة إلى التخزين السحابي ويُحفظ الرابط تلقائيًا. الصيغ:
+              JPG، PNG، WEBP، GIF — حتى 2 ميجابايت.
+            </small>
+            <img
+              *ngIf="displayImageSrc"
+              [src]="displayImageSrc"
+              alt="معاينة صورة المعلم"
+              class="teacher-photo-preview border-round border-1 surface-border shadow-2 w-auto mt-2"
+            />
+          </div>
+        </div>
+
+        <div class="field col-12">
+          <label for="description">نبذة / وصف للموقع العام</label>
+          <textarea
+            id="description"
+            pInputTextarea
+            formControlName="description"
+            rows="3"
+            class="w-full"
+          ></textarea>
+        </div>
+
+        <div class="field col-12">
+          <label for="notes">ملاحظات داخلية</label>
+          <textarea
+            id="notes"
+            pInputTextarea
+            formControlName="notes"
+            rows="2"
+            class="w-full"
+          ></textarea>
+        </div>
+
+        <div class="col-12">
+          <div class="subjects-editor surface-ground border-1 surface-border border-round p-3 md:p-4">
+            <p-divider align="center">
+              <span class="font-bold text-900">المواد ونطاق التدريس</span>
+            </p-divider>
+            <p class="text-600 text-sm m-0 mb-3 line-height-3">
+              أدخل اسم المادة ونطاق التدريس لكل صف؛ تظهر هذه القيم عند اختيار المعلم في
+              <strong>جدولة الحصص</strong>.
+            </p>
+
+            <div formArrayName="subjects" class="flex flex-column gap-3">
+              <div
+                *ngFor="let grp of subjects.controls; let i = index"
+                [formGroupName]="i"
+                class="subject-row flex flex-column lg:flex-row gap-3 align-items-stretch lg:align-items-end surface-card border-1 surface-border border-round p-3"
+              >
+                <div class="flex-grow-1 w-full">
+                  <label [attr.for]="'subj-name-' + i" class="font-semibold"
+                    >اسم المادة</label
+                  >
+                  <input
+                    [id]="'subj-name-' + i"
+                    type="text"
+                    pInputText
+                    formControlName="name"
+                    class="w-full mt-1"
+                  />
+                  <app-validation-message
+                    [control]="grp.get('name')"
+                  ></app-validation-message>
+                </div>
+                <div class="flex-grow-1 w-full">
+                  <label [attr.for]="'subj-scope-' + i" class="font-semibold"
+                    >نطاق التدريس</label
+                  >
+                  <input
+                    [id]="'subj-scope-' + i"
+                    type="text"
+                    pInputText
+                    formControlName="teaching_scope"
+                    class="w-full mt-1"
+                  />
+                  <app-validation-message
+                    [control]="grp.get('teaching_scope')"
+                  ></app-validation-message>
+                </div>
+                <button
+                  type="button"
+                  pButton
+                  icon="pi pi-trash"
+                  class="p-button-danger p-button-outlined align-self-start lg:align-self-end"
+                  (click)="removeSubjectRow(i)"
+                  [attr.aria-label]="'حذف صف مادة ' + (i + 1)"
+                ></button>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              pButton
+              label="إضافة مادة"
+              icon="pi pi-plus"
+              class="p-button-text mt-3"
+              (click)="addSubjectRow()"
+            ></button>
+          </div>
+        </div>
+
+        <div class="col-12 mt-4 flex flex-wrap justify-content-start gap-3">
+          <p-button
+            type="submit"
+            [label]="saveLabel"
+            icon="pi pi-check"
+            [styleClass]="saveClass"
+            [disabled]="disableSave"
+          ></p-button>
+          <p-button
+            *ngIf="isEditing"
+            type="button"
+            label="إلغاء التعديل"
+            icon="pi pi-times"
+            styleClass="p-button-secondary p-button-outlined"
+            (onClick)="cancelEdit()"
+          ></p-button>
+        </div>
+      </form>
+    </p-card>
+
+    <p-table
+      #ft
+      [value]="teachers"
+      dataKey="teacher_id"
+      [globalFilterFields]="['full_name', 'job_title', 'phone']"
+      [paginator]="true"
+      [rows]="10"
+      [rowsPerPageOptions]="[10, 25, 50]"
+      responsiveLayout="scroll"
+      styleClass="p-datatable-gridlines p-datatable-striped py-5 mt-4"
+    >
+      <ng-template pTemplate="caption">
+        <h3 class="font-bold text-center text-xl mb-3">قائمة المعلمين المسجلين</h3>
+        <div
+          class="flex flex-column sm:flex-row align-items-center justify-content-center gap-3 flex-wrap"
+        >
+          <span class="p-input-icon-left mr-0 sm:mr-3 w-full sm:w-auto" style="max-width: 28rem">
+            <i class="pi pi-search"></i>
+            <input
+              pInputText
+              type="text"
+              #searchInput
+              [(ngModel)]="globalFilterValue"
+              (input)="ft.filterGlobal(searchInput.value, 'contains')"
+              placeholder="بحث بالاسم أو المسمّى أو الهاتف..."
+              class="w-full p-inputtext-sm"
+            />
+          </span>
+          <span class="text-lg">
+            العدد:
+            <strong>{{ teachers.length }}</strong>
+          </span>
+        </div>
+      </ng-template>
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th class="text-center" style="width: 4rem">#</th>
+          <th class="text-center">الاسم</th>
+          <th class="text-center">المسمّى الوظيفي</th>
+          <th class="text-center">الهاتف</th>
+          <th class="text-center">المواد</th>
+          <th class="text-center" style="width: 11rem">الإجراءات</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-row>
+        <tr>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">#</p>
+              <p class="row_data mb-0">{{ row.teacher_id }}</p>
+            </div>
+          </td>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">الاسم</p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">{{ row.full_name }}</p>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                المسمّى
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">{{ row.job_title || '—' }}</p>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">
+                الهاتف
+              </p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0">{{ row.phone || '—' }}</p>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div
+              class="flex lg:justify-content-center justify-content-between flex-row"
+            >
+              <p class="lg:hidden sm:inline row_data start-list w-max">المواد</p>
+              <div
+                class="lg:mb-0 sm:mb-2 lg:w-full lg:justify-content-center sm:w-max flex align-items-center gap-1 flex-row flex-wrap"
+              >
+                <p class="row_data mb-0 white-space-normal text-sm">
+                  {{ subjectsPreview(row) }}
+                </p>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="flex justify-content-center gap-2 flex-wrap">
+              <p-button
+                icon="pi pi-pencil"
+                styleClass="p-button-sm p-button-info p-button-text"
+                label="تعديل"
+                (click)="editTeacher(row)"
+              ></p-button>
+              <p-button
+                icon="pi pi-trash"
+                styleClass="p-button-sm p-button-danger p-button-text"
+                label="حذف"
+                (click)="deleteTeacher(row)"
+              ></p-button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="6" class="text-center p-4">
+            لا يوجد معلمون مسجّلون حاليًا.
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

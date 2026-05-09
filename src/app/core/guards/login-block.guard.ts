@@ -1,5 +1,6 @@
 // core/guards/login-block.guard.ts
-import { inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { inject, PLATFORM_ID } from '@angular/core';
 import {
   CanMatchFn,
   Route,
@@ -13,6 +14,12 @@ export const loginBlockGuard: CanMatchFn = async (
   segments: UrlSegment[]
 ): Promise<boolean | UrlTree> => {
   const router = inject(Router);
+  const platformId = inject(PLATFORM_ID);
+
+  if (!isPlatformBrowser(platformId)) {
+    return true;
+  }
+
   const role = localStorage.getItem('sb_role');
   if (role) {
     return router.parseUrl(
